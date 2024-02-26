@@ -1,0 +1,6 @@
+config.yml
+.serverless
+.requirements
+venv
+*.pyc
+*.pyo

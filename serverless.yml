@@ -1,0 +1,44 @@
+service: uid2-normalization-and-encoding
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: ${file(./config.yml):region}
+  environment:
+    source_bucket: ${file(./config.yml):source_bucket}
+    destination_bucket:  ${file(./config.yml):destination_bucket}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:ListBucket
+          Resource:
+            - arn:aws:s3:::${self:provider.environment.source_bucket}
+            - arn:aws:s3:::${self:provider.environment.destination_bucket}
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+          Resource:
+            - arn:aws:s3:::${self:provider.environment.source_bucket}/*
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+          Resource:
+            - arn:aws:s3:::${self:provider.environment.destination_bucket}/*
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource:
+            - "*"
+
+functions:
+  eventCreat:
+    handler: handler.normalization_and_encoding
+    events:
+      - s3:
+          bucket: ${self:provider.environment.source_bucket}
+          event: "s3:ObjectCreated:*"
