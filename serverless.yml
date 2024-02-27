@@ -20,10 +20,13 @@ provider:
         - Effect: Allow
           Action:
             - s3:GetObject
+            - s3:PutObject
+            - s3:DeleteObject
           Resource:
             - arn:aws:s3:::${self:provider.environment.source_bucket}/*
         - Effect: Allow
           Action:
+            - s3:GetObject
             - s3:PutObject
           Resource:
             - arn:aws:s3:::${self:provider.environment.destination_bucket}/*
@@ -42,3 +45,10 @@ functions:
       - s3:
           bucket: ${self:provider.environment.source_bucket}
           event: "s3:ObjectCreated:*"
+  eventUpload:
+    handler: handler.upload_file_to_s3
+    events:
+      - http:
+          path: eventUpload/upload_file_to_s3
+          method: post
+          cors: true
