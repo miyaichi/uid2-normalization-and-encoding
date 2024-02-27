@@ -38,6 +38,13 @@ provider:
           Resource:
             - "*"
 
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+
 functions:
   eventCreat:
     handler: handler.normalization_and_encoding
@@ -50,5 +57,9 @@ functions:
     events:
       - http:
           path: eventUpload/upload_file_to_s3
-          method: post
+          method: GET
+          cors: true
+      - http:
+          path: eventUpload/upload_file_to_s3
+          method: POST
           cors: true
