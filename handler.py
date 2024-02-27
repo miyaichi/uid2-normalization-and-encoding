@@ -34,6 +34,7 @@ def upload_file_to_s3(event, context):
                   Key=key,
                   Body=form_data['file'][0])
 
+    # Create presigned URL of normalized and encoding file
     location = s3.generate_presigned_url(ClientMethod='get_object',
                                          Params={
                                              'Bucket':
@@ -59,7 +60,6 @@ def normalization_and_encoding(event, context):
 
     key = event['Records'][0]['s3']['object']['key']
     source_bucket = event['Records'][0]['s3']['bucket']['name']
-    destination_bucket = os.environ['destination_bucket']
 
     logger.info("source: {}, key: {}".format(source_bucket, key))
 
@@ -76,7 +76,9 @@ def normalization_and_encoding(event, context):
 
     # Write to destination bucket
     buffer.seek(0)
-    s3.put_object(Bucket=destination_bucket, Key=key, Body=buffer.read())
+    s3.put_object(Bucket=os.environ['destination_bucket'],
+                  Key=key,
+                  Body=buffer.read())
 
     # Delete source file
     s3.delete_object(Bucket=source_bucket, Key=key)
