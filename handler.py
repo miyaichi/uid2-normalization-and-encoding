@@ -23,8 +23,12 @@ language = os.environ['language']
 # Store uploaded files in S3.
 def upload_file_to_s3(event, context):
     logger.info("New file uploaded.")
-
     if event['httpMethod'] == 'GET':
+        # Get language parameter.
+        if 'queryStringParameters' in event:
+            if 'language' in event['queryStringParameters']:
+                language = event['queryStringParameters']['language']
+    
         # Returns a form for uploading file.
         template = environment.get_template("upload-{}.tpl".format(language))
         return {
