@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unified ID 2.0のためのメールアドレス変換サービス</title>
+    <title>Email Address Conversion Service for Unified ID 2.0</title>
 
     <link href="http://fonts.googleapis.com/earlyaccess/notosansjp.css">
-    
+
     <style>
         /* Body */
         body {
@@ -111,53 +111,56 @@
     <div data-role="page">
 
         <header data-role="header">
-            <h1>Unified ID 2.0のためのメールアドレス変換サービス</h1>
-            <p>メールアドレスの正規化、ハッシュ化、エンコードを行います。</p>
+            <h1>Email Address Conversion Service for Unified ID 2.0</h1>
+            <p>Normalize, hash, and encode email addresses.</p>
         </header>
 
         <div data-role="main" class="ui-content">
-            <h2>サービス概要</h2>
+            <h2>Overview</h2>
 
-            <p>このツールは、Unified ID 2.0 で利用する際に必要なメールアドレスの正規化、ハッシュ化、エンコードを行います。</p>
+            <p>This tool normalizes, hashes, and encodes email addresses for use with <a href="https://unifiedid.com">Unified ID 2.0</a>.</p>
 
-            <p>サービスの詳細、システム概要、ソースコードは GitHub: <a href="https://github.com/miyaichi/uid2-normalization-and-encoding">Email
-                    address processing service for Unified ID 2.0</a> を確認してください。</p>
+            <p>For more information about the service, system overview, and source code, check GitHub: <a
+                href="https://github.com/miyaichi/uid2-normalization-and-encoding">Email
+                address processing service for Unified ID 2.0</a>.
 
-            <h2>使い方</h2>
+            <h2>How to Use</h2>
 
             <ol>
-                <li>メールアドレスを1行に1つずつ記載したテキストファイルを用意します。</li>
-                <li>ファイルをアップロードします。</li>
-                <li>変換後のファイルをダウンロードします。ダウンロードは{{ expires_in }}分以内に行ってください。</li>
+                <li>Prepare a text file with one email address per line.</li>
+                <li>Upload the file to the service.</li>
+                <li>Download the converted file. The download link will expire after {{ expires_in }} minutes.</li>
             </ol>
 
-            <h2>変換後のファイル</h2>
+            <h2>The Converted File</h2>
 
             <ul>
-                <li>ダウンロードファイルには、1行に1ずつ記載された、メールアドレスを正規化、ハッシュ化、エンコードしたデータが含まれます。</li>
-                <li>行は無作為に並べ替えられていますので、アップロードしたファイルと照合することはできません。</li>
-                <li>ダウンロードファイルの名前は、アップロードされた時刻を使った、YYYYMMDD-HHMMSS.csvというファイル名になります。</li>
+                <li>The download file contains normalized, hashed, and encoded data for email addresses, one per line.
+                </li>
+                <li>The rows are sorted randomly and cannot be matched against the uploaded file.</li>
+                <li>The download file will be named YYYYYMMDD-HHMMMSS.csv, using the uploaded time.</li>
             </ul>
 
-            <h2>セキュリティ</h2>
+            <h2>Security</h2>
 
             <ul>
-                <li>アップロードされたファイル、変換されたファイルは、{{ expires_in }}分後に自動削除されます。</li>
-                <li>メールアドレスは、ログファイルを含めて、システムには一切記録されません。</li>
-                <li>オリジナルのファイル名は保持せず、変換後のデータの順序を無作為にすることで、匿名性を高めています。</li>
+                <li>The uploaded and converted files are automatically deleted after {{ expires_in }} minutes.</li>
+                <li>Email addresses are never stored in the system, including in log files.</li>
+                <li>We enhance anonymity by not retaining the original file name and randomizing the order of the
+                    converted data.</li>
             </ul>
 
             <br />
-            
+
             <form id="file-form" action="https://{{ domain }}/{{ stage }}{{ path }}" method="post"
                 enctype="multipart/form-data">
                 <div> <input type="checkbox" id="agree" />
-                    <label for="agree">上記内容を確認の上、サービスを利用する</label>
+                    <label for="agree">Please review the above information before using the service.</label>
                     <br />
                     <br />
                     <input type="file" name="file" id="file-input" disabled>
                     <button class="btn btn-primary" type="submit">
-                        アップロード
+                        Upload
                     </button>
                 </div>
             </form>

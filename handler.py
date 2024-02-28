@@ -37,7 +37,8 @@ def upload_file_to_s3(event, context):
             template.render({
                 "domain": event['requestContext']['domainName'],
                 "path": event['requestContext']['resourcePath'],
-                "stage": event['requestContext']['stage']
+                "stage": event['requestContext']['stage'],
+                "expires_in": os.environ['expires_in']
             })
         }
 
