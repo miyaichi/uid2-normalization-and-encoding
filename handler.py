@@ -9,6 +9,7 @@ import jinja2
 import json
 import logging
 import os
+import random
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -116,25 +117,24 @@ def normalization_and_encoding(event, context):
 
     logger.info("source: {}, key: {}".format(source_bucket, key))
 
-    buffer = io.TextIOWrapper(io.BytesIO(), encoding="utf-8")
     source = s3.get_object(Bucket=source_bucket, Key=key)
+    encoded_list = []
     for line in source['Body']._raw_stream:
         data_str = line.decode('utf-8').rstrip()
-        if len(data_str):
-            encoded = ''
-            if is_email(data_str):
-                encoded = base64_encode(
-                    hash_sha256(normalize_email_string(data_str)))
-                buffer.write("{}\n".format(encoded))
+        if len(data_str) > 0 and is_email(data_str):
+            encoded_list.append(
+                base64_encode(hash_sha256(normalize_email_string(data_str))))
 
     # Write to destination bucket.
+    buffer = io.TextIOWrapper(io.BytesIO(), encoding="utf-8")
+    for encoded in random_sort(encoded_list):
+        buffer.write("{}\n".format(encoded))
     buffer.seek(0)
     s3.put_object(Bucket=os.environ['destination_bucket'],
                   Key=key,
                   Body=buffer.read())
 
-    # Delete source file.
-    s3.delete_object(Bucket=source_bucket, Key=key)
+    return {"statusCode": 200}
 
 
 # Determine if the string is a email address.
@@ -172,3 +172,11 @@ def base64_encode(b):
 # Hash with SHA256.
 def hash_sha256(data):
     return hashlib.sha256(data.encode()).digest()
+
+
+# Randomly sort list.
+def random_sort(list):
+    for i in range(len(list)):
+        j = random.randint(0, i)
+        list[i], list[j] = list[j], list[i]
+    return list
