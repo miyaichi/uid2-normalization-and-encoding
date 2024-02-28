@@ -1,4 +1,4 @@
-# Email Address Processing Service
+# Email address processing service for Unified ID 2.0
 
 ## Introduction
 
@@ -8,7 +8,7 @@ With the rise of Unified ID 2.0, the need to handle customer email addresses thr
 
 - Perform normalization, hashing, and encoding of email addresses in one step.
 - Automatically deletes uploaded and converted files after a default period of one hour to ensure privacy.
-- Ensures the anonymity of encoded files by not including the original file names and by randomizing the data order.
+- Anonymity of encoded files by not including the original file name and randomizing the order of the data (so that they cannot be easily matched).
 
 ## How to Use
 
@@ -63,10 +63,10 @@ The steps to deploy a service using the serverless framework, including installi
 
 You can specify the deployment region, the bucket name for uploaded and encoded files, and the file expiration date (in minutes).
 
-- region: Specify the region to deploy to.
-- source_bucket: Specify the bucket's name where the uploaded files will be stored. Create a dedicated bucket to delete files periodically.
-- destination_bucket: Specify the bucket's name where encoded files are stored. Please create a dedicated bucket to delete files periodically. Also, specify a different bucket from source_bucket.
-- expires_in: Specify the time in minutes to delete files stored in source_bucket and destination_bucket. The default is 60 minutes.
+- **region**: Specify the region to deploy to.
+- **source_bucket**: Specify the bucket's name where the uploaded files will be stored. Create a dedicated bucket to delete files periodically.
+- **destination_bucket**: Specify the bucket's name where encoded files are stored. Please create a dedicated bucket to delete files periodically. Also, specify a different bucket from source_bucket.
+- **expires_in**: Specify the time in minutes to delete files stored in source_bucket and destination_bucket. The default is 60 minutes.
 
 ## Processing Details
 
