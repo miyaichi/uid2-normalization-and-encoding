@@ -78,7 +78,8 @@ def upload_file_to_s3(event, context):
             },
             "body": template.render({
                 "key": key,
-                "location": location
+                "location": location,
+                "expires_in": os.environ['expires_in']
             })
         }
 

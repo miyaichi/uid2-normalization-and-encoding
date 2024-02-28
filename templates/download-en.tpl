@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unified ID 2.0のためのメールアドレス変換サービス</title>
+    <title>Email Address Conversion Service for Unified ID 2.0</title>
 
     <link href="http://fonts.googleapis.com/earlyaccess/notosansjp.css">
-    
+
     <style>
         /* Body */
         body {
@@ -111,16 +111,16 @@
     <div data-role="page">
 
         <header data-role="header">
-            <h1>Unified ID 2.0のためのメールアドレス変換サービス</h1>
-            <p>メールアドレスの正規化、ハッシュ化、エンコードを行います。</p>
+            <h1>Email Address Conversion Service for Unified ID 2.0</h1>
+            <p>Normalize, hash, and encode email addresses.</p>
         </header>
 
         <div data-role="main" class="ui-content">
-  
+
             <div class="main-content__divider"></div>
             <p class="main-content__description">
-                変換したファイル {{key}} を<a href="{{ location }}">このリンク</a>からダウンロードしてください。<br/>
-                ファイルは、{{ expires_in }}分後に自動削除されます。
+                Download the converted file {{key}} from <a href="{{ location }}">this link</a>.<br />
+                The file will be automatically deleted after {{ expires_in }} minutes.
             </p>
 
         </div>
