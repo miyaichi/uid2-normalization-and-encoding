@@ -7,6 +7,7 @@ provider:
   region: ${file(./config.yml):region}
   environment:
     source_bucket: ${file(./config.yml):source_bucket}
+    source_bucket: ${file(./config.yml):source_bucket}
     destination_bucket:  ${file(./config.yml):destination_bucket}
     expires_in: ${file(./config.yml):expires_in}
   iam:
