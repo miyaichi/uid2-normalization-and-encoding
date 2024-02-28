@@ -43,3 +43,38 @@
    ```bash
    sls deploy
    ```
+
+## config.yml の設定
+
+- region: デプロイするリージョンを指定します。
+- source_bucket: アップロードされたファイルを保存するバケット名を指定します。定期的にファイルを削除するため、専用のバケットを作成してください。
+- destination_bucket: エンコードしたファイルを保存するバケット名を指定します。定期的にファイルを削除するため、専用のバケットを作成してください。また、source_bucket とは異なるバケットを指定してください。
+- expires_in: source_bucket, destination_bucket に保存されたファイルを削除するまでの時間を分単位で指定します。デフォルトは 60 分です。
+
+## 処理内容
+
+### 正規化
+
+Unified ID 2.0 の[Normalization and Encoding](https://unifiedid.com/uid2/normalization-and-encoding)の仕様に従います。
+
+- 先頭と末尾のスペースを削除します。
+- ASCII 文字をすべて小文字に変換します。
+- メールアドレス (ASCII コード 46) にピリオド (.) がある場合は、削除します。例えば、jane.doe@example.com を janedoe@example.com に正規化します。
+- (条件付き) gmail.com のアドレスの場合のみ、@gmail.com の前にプラス記号 (+) とその後ろに追加の文字列を削除します。
+
+### ハッシュ化
+
+SHA-256 でハッシュ化します。
+
+### エンコード
+
+Base64 エンコードします。
+
+### サンプル
+
+| email                  | normalized_email      | hash and encoded                             |
+| ---------------------- | --------------------- | -------------------------------------------- |
+| jane.doe@gmail.com     | janedoe@gmail.com     | 1hFzBkhe0OUK+rOshx6Y+BaZFR8wKBUn1j/18jNlbGk= |
+| janedoe+home@gmail.com | janedoe@gmail.com     | 1hFzBkhe0OUK+rOshx6Y+BaZFR8wKBUn1j/18jNlbGk= |
+| JANESaoirse@gmail.com  | janesaoirse@gmail.com | ku4mBX7Z3qJTXWyLFB1INzkyR2WZGW4ANSJUiW21iI8= |
+| user@example.com       | user@example.com      | tMmiiTI7IaAcPpQPFQ65uMVCWH8av9jw4cwf/F5HVRQ= |
