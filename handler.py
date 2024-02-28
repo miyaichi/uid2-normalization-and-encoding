@@ -65,7 +65,7 @@ def upload_file_to_s3(event, context):
                 'Bucket': os.environ['destination_bucket'],
                 'Key': key
             },
-            ExpiresIn=os.environ['expires_in'],
+            ExpiresIn=int(os.environ['expires_in']) * 60,
             HttpMethod='GET')
 
         # Returns a link to download a file.
@@ -86,9 +86,9 @@ def upload_file_to_s3(event, context):
 def clean_up_buckets(event, context):
     logger.info("Clean up source and destination bucket.")
 
-    # Expires_in seconds before current time.
+    # Expires_in minutes before current time.
     date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(
-        seconds=os.environ['expires_in'])
+        minutes=os.environ['expires_in'])
 
     # Scan buckets and delete old objects.
     buckets = [os.environ['source_bucket'], os.environ['destination_bucket']]

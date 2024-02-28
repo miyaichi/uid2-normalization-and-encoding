@@ -67,4 +67,4 @@ functions:
   rateHandler:
     handler: handler.clean_up_buckets
     events:
-      - schedule: rate(${file(./config.yml):expires_in} seconds)
+      - schedule: rate(${file(./config.yml):expires_in} minutes)
