@@ -64,6 +64,7 @@ The steps to deploy a service using the serverless framework, including installi
 You can specify the deployment region, the bucket name for uploaded and encoded files, and the file expiration date (in minutes).
 
 - **region**: Specify the region to deploy to.
+- **language**: Specifies the language of the template file. For example, if language: ja, template/upload-ja.tpl will be selected as the template.
 - **source_bucket**: Specify the bucket's name where the uploaded files will be stored. Create a dedicated bucket to delete files periodically.
 - **destination_bucket**: Specify the bucket's name where encoded files are stored. Please create a dedicated bucket to delete files periodically. Also, specify a different bucket from source_bucket.
 - **expires_in**: Specify the time in minutes to delete files stored in source_bucket and destination_bucket. The default is 60 minutes.
@@ -72,6 +73,7 @@ The following is an example of a configuration file.
 
 ```yaml
 region: ap-northeast-1
+language: ja
 source_bucket: uid2-normalization-and-encoding-source
 destination_bucket: uid2-normalization-and-encoding-destination
 expires_in: 60

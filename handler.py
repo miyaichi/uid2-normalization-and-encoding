@@ -17,16 +17,16 @@ logger.setLevel(logging.INFO)
 s3 = boto3.client('s3')
 environment = jinja2.Environment(loader=jinja2.FileSystemLoader(
     searchpath='./templates'))
+language = os.environ['language']
 
 
 # Store uploaded files in S3.
 def upload_file_to_s3(event, context):
     logger.info("New file uploaded.")
-    logger.info("Received event {}".format(json.dumps(event)))
 
     if event['httpMethod'] == 'GET':
         # Returns a form for uploading file.
-        template = environment.get_template('upload.tpl')
+        template = environment.get_template("upload-{}.tpl".format(language))
         return {
             "statusCode":
             200,
@@ -69,7 +69,7 @@ def upload_file_to_s3(event, context):
             HttpMethod='GET')
 
         # Returns a link to download a file.
-        template = environment.get_template('download.tpl')
+        template = environment.get_template("download-{}.tpl".format(language))
         return {
             "statusCode": 200,
             "headers": {
@@ -88,7 +88,7 @@ def clean_up_buckets(event, context):
 
     # Expires_in minutes before current time.
     date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(
-        minutes=os.environ['expires_in'])
+        minutes=int(os.environ['expires_in']))
 
     # Scan buckets and delete old objects.
     buckets = [os.environ['source_bucket'], os.environ['destination_bucket']]
