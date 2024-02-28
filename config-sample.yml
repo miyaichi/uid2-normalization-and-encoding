@@ -1,3 +1,4 @@
-region: ap-northeast-1
-source_bucket: source_bucket
-destination_bucket: destination_bucket
+region: <ap-northeast-1>
+source_bucket: <source_bucket>
+destination_bucket: <destination_bucket>
+expires_in: 3600

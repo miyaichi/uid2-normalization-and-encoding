@@ -8,6 +8,7 @@ provider:
   environment:
     source_bucket: ${file(./config.yml):source_bucket}
     destination_bucket:  ${file(./config.yml):destination_bucket}
+    expires_in: ${file(./config.yml):expires_in}
   iam:
     role:
       statements:
@@ -63,3 +64,7 @@ functions:
           path: eventUpload/upload_file_to_s3
           method: POST
           cors: true
+  rateHandler:
+    handler: handler.clean_up_buckets
+    events:
+      - schedule: rate(${file(./config.yml):expires_in} minutes)

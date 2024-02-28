@@ -64,7 +64,7 @@ def upload_file_to_s3(event, context):
                 'Bucket': os.environ['destination_bucket'],
                 'Key': key
             },
-            ExpiresIn=3600,
+            ExpiresIn=os.environ['expires_in'],
             HttpMethod='GET')
 
         # Returns a link to download a file.
@@ -79,6 +79,32 @@ def upload_file_to_s3(event, context):
                 "location": location
             })
         }
+
+
+# Clean up buckets
+def clean_up_buckets(event, context):
+    logger.info("Clean up source and destination bucket.")
+
+    # Expires_in seconds before current time.
+    date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(
+        seconds=os.environ['expires_in'])
+
+    # Scan buckets and delete old objects.
+    buckets = [os.environ['source_bucket'], os.environ['destination_bucket']]
+    for bucket in buckets:
+        response = s3.list_objects_v2(Bucket=bucket)
+        if 'Contents' in response:
+            for obj in response['Contents']:
+                last_modified = obj['LastModified']
+                key = obj['Key']
+                if last_modified < date:
+                    # Delete expired object.
+                    s3.delete_object(Bucket=bucket, Key=key)
+                logger.info(
+                    "Deleted Key {} in Bucket {} (last_modified: {}).".format(
+                        key, bucket, last_modified))
+
+    return {"statusCode": 200}
 
 
 # Normalize and encoding email addresses in S3 bucket files.
