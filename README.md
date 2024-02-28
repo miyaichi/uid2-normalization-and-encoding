@@ -2,7 +2,7 @@
 
 ## Introduction
 
-With the rise of Unified ID 2.0, the need to handle customer email addresses through hashing has increased. This service offers a solution by providing normalization, hashing, and encoding functionalities for uploaded email addresses.
+With the rise of [Unified ID 2.0](https://unifiedid.com/), the need to handle customer email addresses through hashing has increased. This service offers a solution by providing normalization, hashing, and encoding functionalities for uploaded email addresses.
 
 ## Features
 
