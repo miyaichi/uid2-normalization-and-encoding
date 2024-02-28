@@ -68,6 +68,15 @@ You can specify the deployment region, the bucket name for uploaded and encoded 
 - **destination_bucket**: Specify the bucket's name where encoded files are stored. Please create a dedicated bucket to delete files periodically. Also, specify a different bucket from source_bucket.
 - **expires_in**: Specify the time in minutes to delete files stored in source_bucket and destination_bucket. The default is 60 minutes.
 
+The following is an example of a configuration file.
+
+```yaml
+region: ap-northeast-1
+source_bucket: uid2-normalization-and-encoding-source
+destination_bucket: uid2-normalization-and-encoding-destination
+expires_in: 60
+```
+
 ## Processing Details
 
 Follows the Unified ID 2.0 [Normalization and Encoding](https://unifiedid.com/uid2/normalization-and-encoding) specification.
