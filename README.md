@@ -1,78 +1,86 @@
-# uid2-normalization-and-encoding
+# Email Address Processing Service
 
-## はじめに
+## Introduction
 
-[Unified ID 2.0](https://unifiedid.com)の普及に伴い、顧客のメールアドレスをハッシュ化して扱うことがが増えてきました。こうしたニーズに答えるため、アップロードしたメールアドレスを正規化、ハッシュ化、エンコードするサービスを開発しました。
+With the rise of Unified ID 2.0, the need to handle customer email addresses through hashing has increased. This service offers a solution by providing normalization, hashing, and encoding functionalities for uploaded email addresses.
 
-## 特徴
+## Features
 
-- メールアドレスの正規化、ハッシュ化、エンコードを一括で行えます。
-- ユーザーがアップロードしたファイル、変換したファイルは、一定時間後（デフォルトは 1 時間）に自動的に削除します。
-- メールアドレスのファイルとエンコードしたファイルを用意に照合できないよう、エンコードしたファイルにはユーザーがアップロードしたファイル名は含まず、データの並びもランダムになります。
+- Perform normalization, hashing, and encoding of email addresses in one step.
+- Automatically deletes uploaded and converted files after a default period of one hour to ensure privacy.
+- Ensures the anonymity of encoded files by not including the original file names and by randomizing the data order.
 
-## 使い方
+## How to Use
 
-1. アップロード用のエンドポイントに GET リクエストを送り、ファイルをアップロードするフォームを表示します。
-2. フォームから、メールアドレスが１行に１つずつ書かれたテキストファイルをアップロードします。
-3. ダウンロードリンクが表示されるので、それをクリックしてエンコードしたファイルをダウンロードします。
+1. Request a form for uploading files by sending a GET request to the upload endpoint.
+2. Upload a text file with one email address per line through the form.
+3. Click on the download link for the encoded file provided to begin downloading. The download link will become invalid after the time (minutes) specified in expires_in in config.yml.
 
-## システム構成
+## Live Demo
 
-![uid2-normalization-and-encoding](https://github.com/miyaichi/uid2-normalization-and-encoding/assets/129797/45b781a6-c91c-4a7a-8233-76c1357fab33)
+You can try the live demo [here](https://ym5yz9cq41.execute-api.ap-northeast-1.amazonaws.com/dev/eventUpload/upload_file_to_s3).
 
-## デプロイ方法
+## System Configuration
 
-1. serverless framework をインストールします。serverless-python-requirements も追加でインストールします。
+![uid2-normalization-and-encoding](https://github.com/miyaichi/uid2-normalization-and-encoding/assets/129797/0a55eb88-fdcd-45b0-a257-e6147a5fea2e)
+
+## Deployment Guide
+
+The steps to deploy a service using the serverless framework, including installing the necessary packages, cloning the repository, and configuring before deployment, are as follows:
+
+1. Install the serverless framework with additional serverless-python-requirements.
+
    ```bash
    npm install -g serverless
    npm install --save serverless-python-requirements
    ```
-2. このリポジトリをクローンします。
+
+2. Clone this repository.
+
    ```bash
    git clone https://github.com/miyaichi/uid2-normalization-and-encoding.git
    ```
-3. ディレクトリを移動します。
+
+3. Move the directory.
+
    ```bash
    cd uid2-normalization-and-encoding
    ```
-4. config.yml を作成し、設定を記述します。
+
+4. Create config.yml and write your configuration.
+
    ```bash
    cp config.yml.sample config.yml
    ```
-5. デプロイします。
+
+5. Deploy.
+
    ```bash
    sls deploy
    ```
 
-## config.yml の設定
+## Configuration Details
 
-- region: デプロイするリージョンを指定します。
-- source_bucket: アップロードされたファイルを保存するバケット名を指定します。定期的にファイルを削除するため、専用のバケットを作成してください。
-- destination_bucket: エンコードしたファイルを保存するバケット名を指定します。定期的にファイルを削除するため、専用のバケットを作成してください。また、source_bucket とは異なるバケットを指定してください。
-- expires_in: source_bucket, destination_bucket に保存されたファイルを削除するまでの時間を分単位で指定します。デフォルトは 60 分です。
+You can specify the deployment region, the bucket name for uploaded and encoded files, and the file expiration date (in minutes).
 
-## 処理内容
+- region: Specify the region to deploy to.
+- source_bucket: Specify the bucket's name where the uploaded files will be stored. Create a dedicated bucket to delete files periodically.
+- destination_bucket: Specify the bucket's name where encoded files are stored. Please create a dedicated bucket to delete files periodically. Also, specify a different bucket from source_bucket.
+- expires_in: Specify the time in minutes to delete files stored in source_bucket and destination_bucket. The default is 60 minutes.
 
-### 正規化
+## Processing Details
 
-Unified ID 2.0 の[Normalization and Encoding](https://unifiedid.com/uid2/normalization-and-encoding)の仕様に従います。
+Follows the Unified ID 2.0 [Normalization and Encoding](https://unifiedid.com/uid2/normalization-and-encoding) specification.
 
-- 先頭と末尾のスペースを削除します。
-- ASCII 文字をすべて小文字に変換します。
-- メールアドレス (ASCII コード 46) にピリオド (.) がある場合は、削除します。例えば、jane.doe@example.com を janedoe@example.com に正規化します。
-- (条件付き) gmail.com のアドレスの場合のみ、@gmail.com の前にプラス記号 (+) とその後ろに追加の文字列を削除します。
+- **Normalization**: Conforms to Unified ID 2.0 specifications, including trimming, lowercase conversion, and specific address adjustments in the gmail.com domain.
+- **Hashing**: Utilizes SHA-256 for hashing email addresses.
+- **Encoding**: Applies Base64 encoding to the hashed values.
 
-### ハッシュ化
+## Examples
 
-SHA-256 でハッシュ化します。
+The following table provides examples of input email addresses, normalized email addresses, and hashed and encoded output.
 
-### エンコード
-
-Base64 エンコードします。
-
-### サンプル
-
-| email                  | normalized_email      | hash and encoded                             |
+| email                  | normalized email      | hash and encoded                             |
 | ---------------------- | --------------------- | -------------------------------------------- |
 | jane.doe@gmail.com     | janedoe@gmail.com     | 1hFzBkhe0OUK+rOshx6Y+BaZFR8wKBUn1j/18jNlbGk= |
 | janedoe+home@gmail.com | janedoe@gmail.com     | 1hFzBkhe0OUK+rOshx6Y+BaZFR8wKBUn1j/18jNlbGk= |
