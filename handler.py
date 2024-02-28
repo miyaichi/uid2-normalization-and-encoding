@@ -114,6 +114,7 @@ def normalization_and_encoding(event, context):
 
     key = event['Records'][0]['s3']['object']['key']
     source_bucket = event['Records'][0]['s3']['bucket']['name']
+    destination_bucket = os.environ['destination_bucket']
 
     logger.info("source: {}, key: {}".format(source_bucket, key))
 
@@ -125,14 +126,14 @@ def normalization_and_encoding(event, context):
             encoded_list.append(
                 base64_encode(hash_sha256(normalize_email_string(data_str))))
 
+    logger.info("{} email addresses were processed.".format(len(encoded_list)))
+
     # Write to destination bucket.
-    buffer = io.TextIOWrapper(io.BytesIO(), encoding="utf-8")
+    buffer = io.TextIOWrapper(io.BytesIO(), encoding='utf-8')
     for encoded in random_sort(encoded_list):
         buffer.write("{}\n".format(encoded))
     buffer.seek(0)
-    s3.put_object(Bucket=os.environ['destination_bucket'],
-                  Key=key,
-                  Body=buffer.read())
+    s3.put_object(Bucket=destination_bucket, Key=key, Body=buffer.read())
 
     return {"statusCode": 200}
 

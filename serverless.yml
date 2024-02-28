@@ -26,11 +26,6 @@ provider:
             - s3:DeleteObject
           Resource:
             - arn:aws:s3:::${self:provider.environment.source_bucket}/*
-        - Effect: Allow
-          Action:
-            - s3:GetObject
-            - s3:PutObject
-          Resource:
             - arn:aws:s3:::${self:provider.environment.destination_bucket}/*
         - Effect: Allow
           Action:
