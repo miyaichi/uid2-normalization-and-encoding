@@ -24,9 +24,10 @@ def upload_file_to_s3(event, context):
     logger.info("New file uploaded.")
 
     # Get language parameter.
+    language = os.environ['language']
     try:
         language = event.get('queryStringParameters',
-                             {}).get('language', os.environ['language'])
+                             {}).get('language', language)
     except:
         pass
 
