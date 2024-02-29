@@ -20,8 +20,8 @@ With the rise of [Unified ID 2.0](https://unifiedid.com/), the need to handle cu
 
 You can try the live demo.
 
-* [Japanese](https://ym5yz9cq41.execute-api.ap-northeast-1.amazonaws.com/dev/eventUpload/upload_file_to_s3)
-* [English](https://ym5yz9cq41.execute-api.ap-northeast-1.amazonaws.com/dev/eventUpload/upload_file_to_s3?language=en)
+- [Japanese](https://ym5yz9cq41.execute-api.ap-northeast-1.amazonaws.com/dev/eventUpload/upload_file_to_s3)
+- [English](https://ym5yz9cq41.execute-api.ap-northeast-1.amazonaws.com/dev/eventUpload/upload_file_to_s3?language=en)
 
 ## System Configuration
 
@@ -64,7 +64,7 @@ The steps to deploy a service using the serverless framework, including installi
 
 ## Configuration Details
 
-You can specify the deployment region, the bucket name for uploaded and encoded files, and the file expiration date (in minutes).
+You can specify the deployment region, language, the bucket name for uploaded and encoded files, and the file expiration date (in minutes).
 
 - **region**: Specify the region to deploy to.
 - **language**: Specifies the language of the template file. For example, if language: ja, template/upload-ja.tpl will be selected as the template.
