@@ -24,12 +24,6 @@ language = os.environ['language']
 def upload_file_to_s3(event, context):
     logger.info("New file uploaded.")
     if event['httpMethod'] == 'GET':
-        # Get language parameter.
-        if 'queryStringParameters' in event:
-            if 'language' in event['queryStringParameters']:
-                language = event['queryStringParameters']['language']
-    
-        # Returns a form for uploading file.
         template = environment.get_template("upload-{}.tpl".format(language))
         return {
             "statusCode":
@@ -76,11 +70,13 @@ def upload_file_to_s3(event, context):
         # Returns a link to download a file.
         template = environment.get_template("download-{}.tpl".format(language))
         return {
-            "statusCode": 200,
+            "statusCode":
+            200,
             "headers": {
                 'Content-Type': 'text/html'
             },
-            "body": template.render({
+            "body":
+            template.render({
                 "key": key,
                 "location": location,
                 "expires_in": os.environ['expires_in']
