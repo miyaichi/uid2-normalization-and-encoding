@@ -123,7 +123,7 @@
         <div data-role="main" class="ui-content">
             <h2>サービス概要</h2>
 
-            <p>このツールは、<a href="https://unifiedid.com/ja/">Unified ID 2.0</a> で利用する際に必要なメールアドレスの正規化、ハッシュ化、エンコードを行います。</p>
+            <p>このサービスは、<a href="https://unifiedid.com/ja/">Unified ID 2.0</a> で利用する際に必要なメールアドレスの正規化、ハッシュ化、エンコードを行います。</p>
 
             <p>サービスの詳細、システム概要、ソースコードは GitHub: <a
                     href="https://github.com/miyaichi/uid2-normalization-and-encoding">Email

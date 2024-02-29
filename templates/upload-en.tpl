@@ -123,7 +123,7 @@
         <div data-role="main" class="ui-content">
             <h2>Overview</h2>
 
-            <p>This tool normalizes, hashes, and encodes email addresses for use with <a
+            <p>This service normalizes, hashes, and encodes email addresses for use with <a
                     href="https://unifiedid.com">Unified ID 2.0</a>.</p>
 
             <p>For more information about the service, system overview, and source code, check GitHub: <a
