@@ -20,8 +20,8 @@ With the rise of [Unified ID 2.0](https://unifiedid.com/), the need to handle cu
 
 You can try the live demo.
 
-* [Japanese](https://ym5yz9cq41.execute-api.ap-northeast-1.amazonaws.com/dev/eventUpload/upload_file_to_s3){:target="_blank"}
-* [English](https://ym5yz9cq41.execute-api.ap-northeast-1.amazonaws.com/dev/eventUpload/upload_file_to_s3?language=en){:target="_blank"}
+* [Japanese](https://ym5yz9cq41.execute-api.ap-northeast-1.amazonaws.com/dev/eventUpload/upload_file_to_s3)
+* [English](https://ym5yz9cq41.execute-api.ap-northeast-1.amazonaws.com/dev/eventUpload/upload_file_to_s3?language=en)
 
 ## System Configuration
 
