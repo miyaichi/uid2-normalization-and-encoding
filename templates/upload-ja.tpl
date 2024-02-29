@@ -7,7 +7,7 @@
     <title>Unified ID 2.0のためのメールアドレス変換サービス</title>
 
     <link href="http://fonts.googleapis.com/earlyaccess/notosansjp.css">
-    
+
     <style>
         /* Body */
         body {
@@ -118,9 +118,10 @@
         <div data-role="main" class="ui-content">
             <h2>サービス概要</h2>
 
-            <p>このツールは、Unified ID 2.0 で利用する際に必要なメールアドレスの正規化、ハッシュ化、エンコードを行います。</p>
+            <p>このツールは、<a href="https://unifiedid.com/ja/">Unified ID 2.0</a> で利用する際に必要なメールアドレスの正規化、ハッシュ化、エンコードを行います。</p>
 
-            <p>サービスの詳細、システム概要、ソースコードは GitHub: <a href="https://github.com/miyaichi/uid2-normalization-and-encoding">Email
+            <p>サービスの詳細、システム概要、ソースコードは GitHub: <a
+                    href="https://github.com/miyaichi/uid2-normalization-and-encoding">Email
                     address processing service for Unified ID 2.0</a> を確認してください。</p>
 
             <h2>使い方</h2>
@@ -148,9 +149,9 @@
             </ul>
 
             <br />
-            
-            <form id="file-form" action="https://{{ domain }}/{{ stage }}{{ path }}" method="post"
-                enctype="multipart/form-data">
+
+            <form id="file-form" action="https://{{ domain }}/{{ stage }}{{ path }}?language={{ language }}"
+                method="post" enctype="multipart/form-data">
                 <div> <input type="checkbox" id="agree" />
                     <label for="agree">上記内容を確認の上、サービスを利用する</label>
                     <br />

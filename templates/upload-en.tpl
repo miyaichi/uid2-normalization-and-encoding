@@ -118,11 +118,12 @@
         <div data-role="main" class="ui-content">
             <h2>Overview</h2>
 
-            <p>This tool normalizes, hashes, and encodes email addresses for use with <a href="https://unifiedid.com">Unified ID 2.0</a>.</p>
+            <p>This tool normalizes, hashes, and encodes email addresses for use with <a
+                    href="https://unifiedid.com">Unified ID 2.0</a>.</p>
 
             <p>For more information about the service, system overview, and source code, check GitHub: <a
-                href="https://github.com/miyaichi/uid2-normalization-and-encoding">Email
-                address processing service for Unified ID 2.0</a>.
+                    href="https://github.com/miyaichi/uid2-normalization-and-encoding">Email
+                    address processing service for Unified ID 2.0</a>.
 
             <h2>How to Use</h2>
 
@@ -152,8 +153,8 @@
 
             <br />
 
-            <form id="file-form" action="https://{{ domain }}/{{ stage }}{{ path }}" method="post"
-                enctype="multipart/form-data">
+            <form id="file-form" action="https://{{ domain }}/{{ stage }}{{ path }}?language={{ language }}"
+                method="post" enctype="multipart/form-data">
                 <div> <input type="checkbox" id="agree" />
                     <label for="agree">Please review the above information before using the service.</label>
                     <br />

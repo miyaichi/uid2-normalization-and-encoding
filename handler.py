@@ -22,33 +22,39 @@ environment = jinja2.Environment(loader=jinja2.FileSystemLoader(
 # Store uploaded files in S3.
 def upload_file_to_s3(event, context):
     logger.info("New file uploaded.")
-    language = os.environ['language']
+
+    # Get language parameter.
+    try:
+        language = event.get('queryStringParameters',
+                             {}).get('language', os.environ['language'])
+    except:
+        pass
 
     if event['httpMethod'] == 'GET':
-        # Get language parameter.
-        try:
-            value = event.get('queryStringParameters',
-                              {}).get('language', None)
-            if value:
-                language = value
-        except:
-            pass
         # Send the upload form.
-        template = environment.get_template("upload-{}.tpl".format(language))
-        return {
-            "statusCode":
-            200,
-            "headers": {
-                'Content-Type': 'text/html'
-            },
-            "body":
-            template.render({
-                "domain": event['requestContext']['domainName'],
-                "path": event['requestContext']['resourcePath'],
-                "stage": event['requestContext']['stage'],
-                "expires_in": os.environ['expires_in']
-            })
-        }
+        try:
+            template = environment.get_template(
+                "upload-{}.tpl".format(language))
+            return {
+                "statusCode":
+                200,
+                "headers": {
+                    'Content-Type': 'text/html'
+                },
+                "body":
+                template.render({
+                    "expires_in": os.environ['expires_in'],
+                    "language": language,
+                    "domain": event['requestContext']['domainName'],
+                    "stage": event['requestContext']['stage'],
+                    "path": event['requestContext']['resourcePath']
+                })
+            }
+        except:
+            return {
+                "statusCode": 500,
+                "body": "An error occurred while rendering the template."
+            }
 
     if event['httpMethod'] == 'POST':
         # Generate file name in YYYYMMDD-HHMMSS.csv format using the current time.
@@ -56,42 +62,55 @@ def upload_file_to_s3(event, context):
             datetime.timezone(datetime.timedelta(hours=9),
                               'JST')).strftime("%Y%m%d-%H%M%S.csv")
 
-        # Parse multi-part data.
-        _, c_data = cgi.parse_header(event['headers']['content-type'])
-        c_data['boundary'] = bytes(c_data['boundary'], 'utf8')
-        form_data = cgi.parse_multipart(
-            io.BytesIO(bytes(event['body'], 'utf8')), c_data)
+        try:
+            # Parse multi-part data.
+            _, c_data = cgi.parse_header(event['headers']['content-type'])
+            c_data['boundary'] = bytes(c_data['boundary'], 'utf8')
+            form_data = cgi.parse_multipart(
+                io.BytesIO(bytes(event['body'], 'utf8')), c_data)
+        except:
+            return {
+                "statusCode": 400,
+                "body": "An error occurred while parsing the multi-part data."
+            }
 
-        # Store in S3.
-        s3.put_object(Bucket=os.environ['source_bucket'],
-                      Key=key,
-                      Body=form_data['file'][0])
+        try:
+            # Store in S3.
+            s3.put_object(Bucket=os.environ['source_bucket'],
+                          Key=key,
+                          Body=form_data['file'][0])
 
-        # Create presigned URL of normalized and encoding file.
-        location = s3.generate_presigned_url(
-            ClientMethod='get_object',
-            Params={
-                'Bucket': os.environ['destination_bucket'],
-                'Key': key
-            },
-            ExpiresIn=int(os.environ['expires_in']) * 60,
-            HttpMethod='GET')
+            # Create presigned URL of normalized and encoding file.
+            location = s3.generate_presigned_url(
+                ClientMethod='get_object',
+                Params={
+                    'Bucket': os.environ['destination_bucket'],
+                    'Key': key
+                },
+                ExpiresIn=int(os.environ['expires_in']) * 60,
+                HttpMethod='GET')
 
-        # Returns a link to download a file.
-        template = environment.get_template("download-{}.tpl".format(language))
-        return {
-            "statusCode":
-            200,
-            "headers": {
-                'Content-Type': 'text/html'
-            },
-            "body":
-            template.render({
-                "key": key,
-                "location": location,
-                "expires_in": os.environ['expires_in']
-            })
-        }
+            # Returns a link to download a file.
+            template = environment.get_template(
+                "download-{}.tpl".format(language))
+            return {
+                "statusCode":
+                200,
+                "headers": {
+                    'Content-Type': 'text/html'
+                },
+                "body":
+                template.render({
+                    "key": key,
+                    "location": location,
+                    "expires_in": os.environ['expires_in']
+                })
+            }
+        except:
+            return {
+                "statusCode": 500,
+                "body": "An error occurred while storing the file in S3."
+            }
 
 
 # Clean up buckets
@@ -111,11 +130,16 @@ def clean_up_buckets(event, context):
                 last_modified = obj['LastModified']
                 key = obj['Key']
                 if last_modified < date:
-                    # Delete expired object.
-                    s3.delete_object(Bucket=bucket, Key=key)
-                logger.info(
-                    "Deleted Key {} in Bucket {} (last_modified: {}).".format(
-                        key, bucket, last_modified))
+                    try:
+                        # Delete expired object.
+                        s3.delete_object(Bucket=bucket, Key=key)
+                        logger.info(
+                            "Deleted Key {} in Bucket {} (last_modified: {}).".
+                            format(key, bucket, last_modified))
+                    except:
+                        logger.error(
+                            "An error occurred while deleting Key {} in Bucket {}."
+                            .format(key, bucket))
 
     return {"statusCode": 200}
 
@@ -124,28 +148,41 @@ def clean_up_buckets(event, context):
 def normalization_and_encoding(event, context):
     logger.info("New files uploaded to the source bucket.")
 
-    key = event['Records'][0]['s3']['object']['key']
-    source_bucket = event['Records'][0]['s3']['bucket']['name']
-    destination_bucket = os.environ['destination_bucket']
+    try:
+        source_bucket = event['Records'][0]['s3']['bucket']['name']
+        key = event['Records'][0]['s3']['object']['key']
+        logger.info("source: {}, key: {}".format(source_bucket, key))
 
-    logger.info("source: {}, key: {}".format(source_bucket, key))
+        # Process the file.
+        source = s3.get_object(Bucket=source_bucket, Key=key)
+        encoded_list = []
+        for line in source['Body']._raw_stream:
+            data_str = line.decode('utf-8').rstrip()
+            if len(data_str) > 0 and is_email(data_str):
+                encoded_list.append(
+                    base64_encode(hash_sha256(
+                        normalize_email_string(data_str))))
+        logger.info("{} email addresses were processed.".format(
+            len(encoded_list)))
+    except:
+        logger.error("An error occurred while processing the file.")
+        return {"statusCode": 500}
 
-    source = s3.get_object(Bucket=source_bucket, Key=key)
-    encoded_list = []
-    for line in source['Body']._raw_stream:
-        data_str = line.decode('utf-8').rstrip()
-        if len(data_str) > 0 and is_email(data_str):
-            encoded_list.append(
-                base64_encode(hash_sha256(normalize_email_string(data_str))))
+    try:
+        destination_bucket = os.environ['destination_bucket']
+        logger.info("destination: {}, key: {}".format(destination_bucket, key))
 
-    logger.info("{} email addresses were processed.".format(len(encoded_list)))
-
-    # Write to destination bucket.
-    buffer = io.TextIOWrapper(io.BytesIO(), encoding='utf-8')
-    for encoded in random_sort(encoded_list):
-        buffer.write("{}\n".format(encoded))
-    buffer.seek(0)
-    s3.put_object(Bucket=destination_bucket, Key=key, Body=buffer.read())
+        # Write to destination bucket.
+        buffer = io.TextIOWrapper(io.BytesIO(), encoding='utf-8')
+        for encoded in random_sort(encoded_list):
+            buffer.write("{}\n".format(encoded))
+        buffer.seek(0)
+        s3.put_object(Bucket=destination_bucket, Key=key, Body=buffer.read())
+    except:
+        logger.error(
+            "An error occurred while storing the file in the destination bucket."
+        )
+        return {"statusCode": 500}
 
     return {"statusCode": 200}
 
