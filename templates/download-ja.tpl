@@ -35,6 +35,11 @@
             padding: 20px;
         }
 
+        .ui-action {
+            text-align: center;
+            padding: 20px;
+        }
+
         h2 {
             font-size: 18px;
             margin-top: 20px;
@@ -115,14 +120,9 @@
             <p>メールアドレスの正規化、ハッシュ化、エンコードを行います。</p>
         </header>
 
-        <div data-role="main" class="ui-content">
-  
-            <div class="main-content__divider"></div>
-            <p class="main-content__description">
-                変換したファイル {{key}} を<a href="{{ location }}">このリンク</a>からダウンロードしてください。<br/>
-                ファイルは、{{ expires_in }}分後に自動削除されます。
-            </p>
-
+        <div data-role="main" class="ui-action">
+            <p>変換したファイル {{key}} を<a href="{{ location }}">このリンク</a>からダウンロードしてください。</p>
+            <p>ファイルは、{{ expires_in }}分後に自動削除されます。</p>
         </div>
 
         <footer data-role="footer">

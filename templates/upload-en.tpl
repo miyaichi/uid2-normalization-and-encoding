@@ -35,6 +35,11 @@
             padding: 20px;
         }
 
+        .ui-action {
+            text-align: center;
+            padding: 20px;
+        }
+
         h2 {
             font-size: 18px;
             margin-top: 20px;
@@ -150,19 +155,18 @@
                 <li>We enhance anonymity by not retaining the original file name and randomizing the order of the
                     converted data.</li>
             </ul>
+        </div>
 
-            <br />
-
+        <div data-role="main" class="ui-action">
+            <h2>File Upload</h2>
             <form id="file-form" action="https://{{ domain }}/{{ stage }}{{ path }}?language={{ language }}"
                 method="post" enctype="multipart/form-data">
-                <div> <input type="checkbox" id="agree" />
-                    <label for="agree">Please review the above information before using the service.</label>
-                    <br />
-                    <br />
-                    <input type="file" name="file" id="file-input" disabled>
-                    <button class="btn btn-primary" type="submit">
-                        Upload
-                    </button>
+                <p><input type="checkbox" id="agree" /><label for="agree">Please review the above information before using the service.</label></p>
+
+                <input type="file" name="file" id="file-input" disabled>
+                <button class="btn btn-primary" type="submit">
+                    Upload
+                </button>
                 </div>
             </form>
             <script type="text/javascript">
@@ -174,7 +178,6 @@
                     }
                 });
             </script>
-
         </div>
 
         <footer data-role="footer">

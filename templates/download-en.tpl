@@ -35,6 +35,11 @@
             padding: 20px;
         }
 
+        .ui-action {
+            text-align: center;
+            padding: 20px;
+        }
+        
         h2 {
             font-size: 18px;
             margin-top: 20px;
@@ -115,14 +120,9 @@
             <p>Normalize, hash, and encode email addresses.</p>
         </header>
 
-        <div data-role="main" class="ui-content">
-
-            <div class="main-content__divider"></div>
-            <p class="main-content__description">
-                Download the converted file {{key}} from <a href="{{ location }}">this link</a>.<br />
-                The file will be automatically deleted after {{ expires_in }} minutes.
-            </p>
-
+        <div data-role="main" class="ui-action">
+            <p>Download the converted file {{key}} from <a href="{{ location }}">this link</a>.</p>
+            <p>フThe file will be automatically deleted after {{ expires_in }} minutes.</p>
         </div>
 
         <footer data-role="footer">

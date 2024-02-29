@@ -35,6 +35,11 @@
             padding: 20px;
         }
 
+        .ui-action {
+            text-align: center;
+            padding: 20px;
+        }
+
         h2 {
             font-size: 18px;
             margin-top: 20px;
@@ -147,20 +152,18 @@
                 <li>メールアドレスは、ログファイルを含めて、システムには一切記録されません。</li>
                 <li>オリジナルのファイル名は保持せず、変換後のデータの順序を無作為にすることで、匿名性を高めています。</li>
             </ul>
+        </div>
 
-            <br />
-
+        <div data-role="main" class="ui-action">
+            <h2>ファイルアップロード</h2>
             <form id="file-form" action="https://{{ domain }}/{{ stage }}{{ path }}?language={{ language }}"
                 method="post" enctype="multipart/form-data">
-                <div> <input type="checkbox" id="agree" />
-                    <label for="agree">上記内容を確認の上、サービスを利用する</label>
-                    <br />
-                    <br />
-                    <input type="file" name="file" id="file-input" disabled>
-                    <button class="btn btn-primary" type="submit">
-                        アップロード
-                    </button>
-                </div>
+                <p><input type="checkbox" id="agree" /><label for="agree">上記内容を確認の上、サービスを利用する</label></p>
+
+                <input type="file" name="file" id="file-input" disabled>
+                <button class="btn btn-primary" type="submit">
+                    アップロード
+                </button>
             </form>
             <script type="text/javascript">
                 document.getElementById('agree').addEventListener('change', function () {
@@ -171,7 +174,6 @@
                     }
                 });
             </script>
-
         </div>
 
         <footer data-role="footer">
