@@ -17,13 +17,23 @@ logger.setLevel(logging.INFO)
 s3 = boto3.client('s3')
 environment = jinja2.Environment(loader=jinja2.FileSystemLoader(
     searchpath='./templates'))
-language = os.environ['language']
 
 
 # Store uploaded files in S3.
 def upload_file_to_s3(event, context):
     logger.info("New file uploaded.")
+    language = os.environ['language']
+
     if event['httpMethod'] == 'GET':
+        # Get language parameter.
+        try:
+            value = event.get('queryStringParameters',
+                              {}).get('language', None)
+            if value:
+                language = value
+        except:
+            pass
+        # Send the upload form.
         template = environment.get_template("upload-{}.tpl".format(language))
         return {
             "statusCode":
