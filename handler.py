@@ -21,7 +21,7 @@ environment = jinja2.Environment(loader=jinja2.FileSystemLoader(
 
 # Store uploaded files in S3.
 def upload_file_to_s3(event, context):
-    logger.info("New file uploaded.")
+    logger.info("File upload request.")
 
     # Get language parameter.
     language = os.environ['language']
@@ -32,8 +32,8 @@ def upload_file_to_s3(event, context):
         pass
 
     if event['httpMethod'] == 'GET':
-        # Send the upload form.
         try:
+            # Send the upload form.
             template = environment.get_template(
                 "upload-{}.tpl".format(language))
             return {
