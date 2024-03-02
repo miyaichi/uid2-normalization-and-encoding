@@ -100,3 +100,7 @@ The following table provides examples of input email addresses, normalized email
 | janedoe+home@gmail.com | janedoe@gmail.com     | 1hFzBkhe0OUK+rOshx6Y+BaZFR8wKBUn1j/18jNlbGk= |
 | JANESaoirse@gmail.com  | janesaoirse@gmail.com | ku4mBX7Z3qJTXWyLFB1INzkyR2WZGW4ANSJUiW21iI8= |
 | user@example.com       | user@example.com      | tMmiiTI7IaAcPpQPFQ65uMVCWH8av9jw4cwf/F5HVRQ= |
+
+# Lisence
+
+This project is licensed under the MIT License, see the LICENSE.txt file for details
