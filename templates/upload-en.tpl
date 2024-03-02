@@ -11,6 +11,7 @@
     <style>
         /* Body */
         body {
+            text-align: center;
             font-family: 'Noto Sans JP', sans-serif;
             font-size: 14px;
             line-height: 1.5;
@@ -21,7 +22,6 @@
 
         /* Header */
         header {
-            text-align: center;
             padding: 5px;
         }
 
@@ -32,6 +32,8 @@
 
         /* Main contents */
         .ui-content {
+            display: inline-block;
+            text-align: left;
             padding: 20px;
         }
 
@@ -144,7 +146,7 @@
                 <li>The download file contains normalized, hashed, and encoded data for email addresses, one per line.
                 </li>
                 <li>The rows are sorted randomly and cannot be matched against the uploaded file.</li>
-                <li>The download file will be named YYYYYMMDD-HHMMMSS.csv, using the uploaded time.</li>
+                <li>The name of the download file will be a unique file name with UUID (e.g. 54f1c989-b7d7-4d97-a054-46562c8c66a8.csv)</li>
             </ul>
 
             <h2>Security</h2>
@@ -164,7 +166,7 @@
                 <p><input type="checkbox" id="agree" /><label for="agree">Please review the above information before using the service.</label></p>
 
                 <input type="file" name="file" id="file-input" disabled>
-                <button class="btn btn-primary" type="submit">
+                <button class="btn btn-primary" type="submit" disabled>
                     Upload
                 </button>
                 </div>
@@ -173,8 +175,10 @@
                 document.getElementById('agree').addEventListener('change', function () {
                     if (this.checked) {
                         document.getElementById('file-input').disabled = false;
+                        document.querySelector('button[type="submit"]').disabled = false;
                     } else {
                         document.getElementById('file-input').disabled = true;
+                        document.querySelector('button[type="submit"]').disabled = true;
                     }
                 });
             </script>

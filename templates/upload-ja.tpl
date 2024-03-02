@@ -11,6 +11,7 @@
     <style>
         /* Body */
         body {
+            text-align: center;
             font-family: 'Noto Sans JP', sans-serif;
             font-size: 14px;
             line-height: 1.5;
@@ -21,7 +22,6 @@
 
         /* Header */
         header {
-            text-align: center;
             padding: 5px;
         }
 
@@ -32,6 +32,8 @@
 
         /* Main contents */
         .ui-content {
+            display: inline-block;
+            text-align: left;
             padding: 20px;
         }
 
@@ -142,7 +144,7 @@
             <ul>
                 <li>ダウンロードファイルには、1行に1ずつ記載された、メールアドレスを正規化、ハッシュ化、エンコードしたデータが含まれます。</li>
                 <li>行は無作為に並べ替えられていますので、アップロードしたファイルと照合することはできません。</li>
-                <li>ダウンロードファイルの名前は、アップロードされた時刻を使った、YYYYMMDD-HHMMSS.csvというファイル名になります。</li>
+                <li>ダウンロードファイルの名前は、UUIDを使ったユニークなファイル名（例:54f1c989-b7d7-4d97-a054-46562c8c66a8.csv）になります。</li>
             </ul>
 
             <h2>セキュリティ</h2>
@@ -161,7 +163,7 @@
                 <p><input type="checkbox" id="agree" /><label for="agree">上記内容を確認の上、サービスを利用する</label></p>
 
                 <input type="file" name="file" id="file-input" disabled>
-                <button class="btn btn-primary" type="submit">
+                <button class="btn btn-primary" type="submit" disabled>
                     アップロード
                 </button>
             </form>
@@ -169,8 +171,10 @@
                 document.getElementById('agree').addEventListener('change', function () {
                     if (this.checked) {
                         document.getElementById('file-input').disabled = false;
+                        document.querySelector('button[type="submit"]').disabled = false;
                     } else {
                         document.getElementById('file-input').disabled = true;
+                        document.querySelector('button[type="submit"]').disabled = true;
                     }
                 });
             </script>

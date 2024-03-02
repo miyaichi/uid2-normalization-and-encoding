@@ -7,10 +7,11 @@
     <title>Unified ID 2.0のためのメールアドレス変換サービス</title>
 
     <link href="http://fonts.googleapis.com/earlyaccess/notosansjp.css">
-    
+
     <style>
         /* Body */
         body {
+            text-align: center;
             font-family: 'Noto Sans JP', sans-serif;
             font-size: 14px;
             line-height: 1.5;
@@ -21,7 +22,6 @@
 
         /* Header */
         header {
-            text-align: center;
             padding: 5px;
         }
 

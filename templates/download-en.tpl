@@ -11,6 +11,7 @@
     <style>
         /* Body */
         body {
+            text-align: center;
             font-family: 'Noto Sans JP', sans-serif;
             font-size: 14px;
             line-height: 1.5;
@@ -21,7 +22,6 @@
 
         /* Header */
         header {
-            text-align: center;
             padding: 5px;
         }
 
@@ -39,7 +39,7 @@
             text-align: center;
             padding: 20px;
         }
-        
+
         h2 {
             font-size: 18px;
             margin-top: 20px;

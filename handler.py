@@ -10,6 +10,7 @@ import json
 import logging
 import os
 import random
+import uuid
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -58,10 +59,8 @@ def upload_file_to_s3(event, context):
             }
 
     if event['httpMethod'] == 'POST':
-        # Generate file name in YYYYMMDD-HHMMSS.csv format using the current time.
-        key = datetime.datetime.now(
-            datetime.timezone(datetime.timedelta(hours=9),
-                              'JST')).strftime("%Y%m%d-%H%M%S.csv")
+        # Generate unique keys using uuid.
+        key = str(uuid.uuid4()) + '.csv'
 
         try:
             # Parse multi-part data.
