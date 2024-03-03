@@ -113,6 +113,38 @@
     </style>
 </head>
 
+{% set aws_region_mapping = {
+    'us-east-2': 'US East (Ohio)',
+    'us-east-1': 'US East (Virginia)',
+    'us-west-1': 'US West (N. California)',
+    'us-west-2': 'US West (Oregon)',
+    'af-south-1': 'Africa (Cape Town)',
+    'ap-east-1': 'Asia Pacific (Hong Kong)',
+    'ap-south-2': 'Asia Pacific (Hyderabad)',
+    'ap-southeast-3': 'Asia Pacific (Jakarta)',
+    'ap-southeast-4': 'Asia Pacific (Melbourne)',
+    'ap-south-1': 'Asia Pacific (Mumbai)',
+    'ap-northeast-3': 'Asia Pacific (Osaka)',
+    'ap-northeast-2': 'Asia Pacific (Seoul)',
+    'ap-southeast-1': 'Asia Pacific (Singapore)',
+    'ap-southeast-2': 'Asia Pacific (Sydney)',
+    'ap-northeast-1': 'Asia Pacific (Tokyo)',
+    'ca-central-1': 'Canada (Central)',
+    'ca-west-1': 'Canada West (Calgary)',
+    'eu-central-1': 'Europe (Frankfurt)',
+    'eu-west-1': 'Europe (Ireland)',
+    'eu-west-2': 'Europe (London)',
+    'eu-south-1': 'Europe (Milan)',
+    'eu-west-3': 'Europe (Paris)',
+    'eu-south-2': 'Europe (Spain)',
+    'eu-north-1': 'Europe (Stockholm)',
+    'eu-central-2': 'Europe (Zurich)',
+    'il-central-1': 'Israel (Tel Aviv)',
+    'me-south-1': 'Middle East (Bahrain)',
+    'me-central-1': 'Middle East (UAE)',
+    'sa-east-1': 'South America (São Paulo)',
+} %}
+
 <body>
 
     <div data-role="page">
@@ -143,8 +175,7 @@
             <h2>The Converted File</h2>
 
             <ul>
-                <li>The download file contains normalized, hashed, and encoded data for email addresses, one per line.
-                </li>
+                <li>The download file contains normalized, hashed, and encoded data for email addresses, one per line.</li>
                 <li>The rows are sorted randomly and cannot be matched against the uploaded file.</li>
                 <li>The name of the download file will be a unique file name with UUID (e.g. 54f1c989-b7d7-4d97-a054-46562c8c66a8.csv)</li>
             </ul>
@@ -152,6 +183,7 @@
             <h2>Security</h2>
 
             <ul>
+                <li>The service is hosted on AWS in the {{ aws_region_mapping[region] }} region.</li>
                 <li>The uploaded and converted files are automatically deleted after {{ expires_in }} minutes.</li>
                 <li>Email addresses are never stored in the system, including in log files.</li>
                 <li>We enhance anonymity by not retaining the original file name and randomizing the order of the

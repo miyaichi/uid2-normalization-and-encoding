@@ -47,6 +47,7 @@ def upload_file_to_s3(event, context):
                 template.render({
                     "expires_in": os.environ['expires_in'],
                     "language": language,
+                    "region": os.environ['AWS_REGION'],
                     "domain": event['requestContext']['domainName'],
                     "stage": event['requestContext']['stage'],
                     "path": event['requestContext']['resourcePath']
