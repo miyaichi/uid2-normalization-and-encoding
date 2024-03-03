@@ -9,6 +9,7 @@ class TestIsEmail(unittest.TestCase):
         self.assertTrue(is_email('user@example.com'))
         # Case 2. Determine if the string is not a email address.
         self.assertFalse(is_email('userexample.com'))
+        # Case 3. Determine if the string is not a email address.
         self.assertFalse(is_email('user@examplecom'))
 
 
