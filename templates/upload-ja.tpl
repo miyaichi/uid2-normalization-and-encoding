@@ -95,21 +95,6 @@
         a:hover {
             text-decoration: underline;
         }
-
-        .ui-collapsible {
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-
-        .ui-collapsible-header {
-            background-color: #f6f8fa;
-            padding: 10px;
-        }
-
-        .ui-collapsible-content {
-            padding: 10px;
-        }
     </style>
 </head>
 
