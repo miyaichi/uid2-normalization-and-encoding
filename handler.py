@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import base64
 import boto3
 import cgi
@@ -13,6 +12,8 @@ import random
 import uuid
 from botocore.config import Config
 
+# -*- coding: utf-8 -*-
+
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -23,8 +24,17 @@ environment = jinja2.Environment(loader=jinja2.FileSystemLoader(
     searchpath='./templates'))
 
 
-# Store uploaded files in S3.
-def upload_file_to_s3(event, context):
+def upload_file_to_s3(event: dict, context: dict) -> dict:
+    """
+    Uploads a file to S3 and returns an HTML form for file upload.
+
+    Args:
+        event (dict): The event data.
+        context (dict): The context data.
+
+    Returns:
+        dict: The response containing the HTML form or an error message.
+    """
     logger.info("File upload request.")
 
     # Get language parameter.
@@ -117,8 +127,17 @@ def upload_file_to_s3(event, context):
             }
 
 
-# Clean up buckets
-def clean_up_buckets(event, context):
+def clean_up_buckets(event: dict, context: dict) -> dict:
+    """
+    Cleans up the source and destination buckets by deleting expired objects.
+
+    Args:
+        event (dict): The event data.
+        context (dict): The context data.
+
+    Returns:
+        dict: The response indicating the success or failure of the cleanup operation.
+    """
     logger.info("Clean up source and destination bucket.")
 
     # Expires_in minutes before current time.
@@ -148,8 +167,17 @@ def clean_up_buckets(event, context):
     return {"statusCode": 200}
 
 
-# Normalize and encoding email addresses in S3 bucket files.
-def normalization_and_encoding(event, context):
+def normalization_and_encoding(event: dict, context: dict) -> dict:
+    """
+    Normalizes and encodes email addresses in S3 bucket files.
+
+    Args:
+        event (dict): The event data.
+        context (dict): The context data.
+
+    Returns:
+        dict: The response indicating the success or failure of the normalization and encoding process.
+    """
     logger.info("New files uploaded to the source bucket.")
 
     try:
@@ -191,8 +219,16 @@ def normalization_and_encoding(event, context):
     return {"statusCode": 200}
 
 
-# Determine if the string is a email address.
-def is_email(data):
+def is_email(data: str) -> bool:
+    """
+    Determines if the string is an email address.
+
+    Args:
+        data (str): The string to check.
+
+    Returns:
+        bool: True if the string is an email address, False otherwise.
+    """
     if data.count('@') != 1:
         return False
     _, domain = data.split('@')
@@ -201,8 +237,16 @@ def is_email(data):
     return True
 
 
-# Normalise email string.
-def normalize_email_string(email):
+def normalize_email_string(email: str) -> str:
+    """
+    Normalizes an email string.
+
+    Args:
+        email (str): The email string to normalize.
+
+    Returns:
+        str: The normalized email string.
+    """
     # Remove leading and trailing spaces.
     email = email.strip()
     # Convert to lowercase.
@@ -218,19 +262,43 @@ def normalize_email_string(email):
     return email
 
 
-# Base64 encode.
-def base64_encode(b):
+def base64_encode(b: bytes) -> str:
+    """
+    Encodes bytes using Base64.
+
+    Args:
+        b (bytes): The bytes to encode.
+
+    Returns:
+        str: The Base64 encoded string.
+    """
     return base64.b64encode(b).decode()
 
 
-# Hash with SHA256.
-def hash_sha256(data):
+def hash_sha256(data: str) -> bytes:
+    """
+    Hashes a string using SHA256.
+
+    Args:
+        data (str): The string to hash.
+
+    Returns:
+        bytes: The hashed bytes.
+    """
     return hashlib.sha256(data.encode()).digest()
 
 
-# Randomly sort list.
-def random_sort(list):
-    for i in range(len(list)):
+def random_sort(lst: list) -> list:
+    """
+    Randomly sorts a list.
+
+    Args:
+        lst (list): The list to sort.
+
+    Returns:
+        list: The randomly sorted list.
+    """
+    for i in range(len(lst)):
         j = random.randint(0, i)
-        list[i], list[j] = list[j], list[i]
-    return list
+        lst[i], lst[j] = lst[j], lst[i]
+    return lst
