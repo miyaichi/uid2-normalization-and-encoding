@@ -18,10 +18,10 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 s3 = boto3.client('s3',
-                  config=Config(region_name=os.environ['AWS_REGION'],
-                                signature_version='s3v4'))
+                  config=Config(region_name=os.environ["AWS_REGION"],
+                                signature_version="s3v4"))
 environment = jinja2.Environment(loader=jinja2.FileSystemLoader(
-    searchpath='./templates'))
+    searchpath="./templates"))
 
 
 def upload_file_to_s3(event: dict, context: dict) -> dict:
@@ -38,32 +38,31 @@ def upload_file_to_s3(event: dict, context: dict) -> dict:
     logger.info("File upload request.")
 
     # Get language parameter.
-    language = os.environ['language']
+    language = os.environ["language"]
     try:
-        language = event.get('queryStringParameters',
-                             {}).get('language', language)
+        language = event.get("queryStringParameters",
+                             {}).get("language", language)
     except:
         pass
 
-    if event['httpMethod'] == 'GET':
+    if event["httpMethod"] == "GET":
         try:
             # Send the upload form.
-            template = environment.get_template(
-                "upload-{}.tpl".format(language))
+            template = environment.get_template(f"upload-{language}.tpl")
             return {
                 "statusCode":
                 200,
                 "headers": {
-                    'Content-Type': 'text/html'
+                    "Content-Type": "text/html"
                 },
                 "body":
                 template.render({
-                    "expires_in": os.environ['expires_in'],
+                    "expires_in": os.environ["expires_in"],
                     "language": language,
-                    "region": os.environ['AWS_REGION'],
-                    "domain": event['requestContext']['domainName'],
-                    "stage": event['requestContext']['stage'],
-                    "path": event['requestContext']['resourcePath']
+                    "region": os.environ["AWS_REGION"],
+                    "domain": event["requestContext"]["domainName"],
+                    "stage": event["requestContext"]["stage"],
+                    "path": event["requestContext"]["resourcePath"]
                 })
             }
         except:
@@ -72,16 +71,16 @@ def upload_file_to_s3(event: dict, context: dict) -> dict:
                 "body": "An error occurred while rendering the template."
             }
 
-    if event['httpMethod'] == 'POST':
+    if event["httpMethod"] == "POST":
         # Generate unique keys using uuid.
-        key = str(uuid.uuid4()) + '.csv'
+        key = str(uuid.uuid4()) + ".csv"
 
         try:
             # Parse multi-part data.
-            _, c_data = cgi.parse_header(event['headers']['content-type'])
-            c_data['boundary'] = bytes(c_data['boundary'], 'utf8')
+            _, c_data = cgi.parse_header(event["headers"]["content-type"])
+            c_data["boundary"] = bytes(c_data["boundary"], "utf8")
             form_data = cgi.parse_multipart(
-                io.BytesIO(bytes(event['body'], 'utf8')), c_data)
+                io.BytesIO(bytes(event["body"], "utf8")), c_data)
         except:
             return {
                 "statusCode": 400,
@@ -90,34 +89,35 @@ def upload_file_to_s3(event: dict, context: dict) -> dict:
 
         try:
             # Store in S3.
-            s3.put_object(Bucket=os.environ['source_bucket'],
+            header = b"# email\n"
+            data = header + form_data["file"][0]
+            s3.put_object(Bucket=os.environ["source_bucket"],
                           Key=key,
-                          Body=form_data['file'][0])
+                          Body=data)
 
-            # Create presigned URL of normalized and encoding file.
+            # Generate a pre-signed URL.
             location = s3.generate_presigned_url(
-                ClientMethod='get_object',
+                ClientMethod="get_object",
                 Params={
-                    'Bucket': os.environ['destination_bucket'],
-                    'Key': key
+                    "Bucket": os.environ["destination_bucket"],
+                    "Key": key
                 },
-                ExpiresIn=int(os.environ['expires_in']) * 60,
-                HttpMethod='GET')
+                ExpiresIn=int(os.environ["expires_in"]) * 60,
+                HttpMethod="GET")
 
             # Returns a link to download a file.
-            template = environment.get_template(
-                "download-{}.tpl".format(language))
+            template = environment.get_template(f"download-{language}.tpl")
             return {
                 "statusCode":
                 200,
                 "headers": {
-                    'Content-Type': 'text/html'
+                    "Content-Type": "text/html"
                 },
                 "body":
                 template.render({
                     "key": key,
                     "location": location,
-                    "expires_in": os.environ['expires_in']
+                    "expires_in": os.environ["expires_in"]
                 })
             }
         except:
@@ -142,27 +142,27 @@ def clean_up_buckets(event: dict, context: dict) -> dict:
 
     # Expires_in minutes before current time.
     date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(
-        minutes=int(os.environ['expires_in']))
+        minutes=int(os.environ["expires_in"]))
 
     # Scan buckets and delete old objects.
-    buckets = [os.environ['source_bucket'], os.environ['destination_bucket']]
+    buckets = [os.environ["source_bucket"], os.environ["destination_bucket"]]
     for bucket in buckets:
         response = s3.list_objects_v2(Bucket=bucket)
-        if 'Contents' in response:
-            for obj in response['Contents']:
-                last_modified = obj['LastModified']
-                key = obj['Key']
+        if "Contents" in response:
+            for obj in response["Contents"]:
+                last_modified = obj["LastModified"]
+                key = obj["Key"]
                 if last_modified < date:
                     try:
                         # Delete expired object.
                         s3.delete_object(Bucket=bucket, Key=key)
                         logger.info(
-                            "Deleted Key {} in Bucket {} (last_modified: {}).".
-                            format(key, bucket, last_modified))
+                            f"Deleted Key {key} in Bucket {bucket} (last_modified: {last_modified})."
+                        )
                     except:
                         logger.error(
-                            "An error occurred while deleting Key {} in Bucket {}."
-                            .format(key, bucket))
+                            f"An error occurred while deleting Key {key} in Bucket {bucket}."
+                        )
 
     return {"statusCode": 200}
 
@@ -181,33 +181,32 @@ def normalization_and_encoding(event: dict, context: dict) -> dict:
     logger.info("New files uploaded to the source bucket.")
 
     try:
-        source_bucket = event['Records'][0]['s3']['bucket']['name']
-        key = event['Records'][0]['s3']['object']['key']
-        logger.info("source: {}, key: {}".format(source_bucket, key))
+        source_bucket = event["Records"][0]["s3"]["bucket"]["name"]
+        key = event["Records"][0]["s3"]["object"]["key"]
+        logger.info(f"source: {source_bucket}, key: {key}")
 
         # Process the file.
         source = s3.get_object(Bucket=source_bucket, Key=key)
         encoded_list = []
-        for line in source['Body']._raw_stream:
-            data_str = line.decode('utf-8').rstrip()
+        for line in source["Body"]._raw_stream:
+            data_str = line.decode("utf-8").rstrip()
             if len(data_str) > 0 and is_email(data_str):
                 encoded_list.append(
                     base64_encode(hash_sha256(
                         normalize_email_string(data_str))))
-        logger.info("{} email addresses were processed.".format(
-            len(encoded_list)))
+        logger.info(f"{len(encoded_list)} email addresses were processed.")
     except:
         logger.error("An error occurred while processing the file.")
         return {"statusCode": 500}
 
     try:
-        destination_bucket = os.environ['destination_bucket']
-        logger.info("destination: {}, key: {}".format(destination_bucket, key))
+        destination_bucket = os.environ["destination_bucket"]
+        logger.info(f"destination: {destination_bucket}, key: {key}")
 
         # Write to destination bucket.
-        buffer = io.TextIOWrapper(io.BytesIO(), encoding='utf-8')
+        buffer = io.TextIOWrapper(io.BytesIO(), encoding="utf-8")
         for encoded in random_sort(encoded_list):
-            buffer.write("{}\n".format(encoded))
+            buffer.write(f"{encoded}\n")
         buffer.seek(0)
         s3.put_object(Bucket=destination_bucket, Key=key, Body=buffer.read())
     except:
@@ -229,10 +228,10 @@ def is_email(data: str) -> bool:
     Returns:
         bool: True if the string is an email address, False otherwise.
     """
-    if data.count('@') != 1:
+    if data.count("@") != 1:
         return False
-    _, domain = data.split('@')
-    if domain.count('.') != 1:
+    _, domain = data.split("@")
+    if domain.count(".") != 1:
         return False
     return True
 
@@ -252,13 +251,13 @@ def normalize_email_string(email: str) -> str:
     # Convert to lowercase.
     email = email.lower()
     # In gmail.com addresses only.
-    if email.endswith('@gmail.com'):
-        local, domain = email.split('@')
+    if email.endswith("@gmail.com"):
+        local, domain = email.split("@")
         # Remove all dots.
-        local = local.replace('.', '')
+        local = local.replace(".", "")
         # Remove everything after the first plus sign.
-        local = local.split('+')[0]
-        email = local + '@' + domain
+        local = local.split("+")[0]
+        email = local + "@" + domain
     return email
 
 
