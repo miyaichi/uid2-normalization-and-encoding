@@ -11,11 +11,14 @@ import logging
 import os
 import random
 import uuid
+from botocore.config import Config
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-s3 = boto3.client('s3')
+s3 = boto3.client('s3',
+                  config=Config(region_name=os.environ['AWS_REGION'],
+                                signature_version='s3v4'))
 environment = jinja2.Environment(loader=jinja2.FileSystemLoader(
     searchpath='./templates'))
 
