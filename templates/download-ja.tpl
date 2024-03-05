@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unified ID 2.0のためのメールアドレス変換サービス</title>
+    <title>Unified ID 2.0のためのデータ変換サービス</title>
 
     <link href="http://fonts.googleapis.com/earlyaccess/notosansjp.css">
 
@@ -101,7 +101,7 @@
     <div data-role="page">
 
         <header data-role="header">
-            <h1>Unified ID 2.0のためのメールアドレス変換サービス</h1>
+            <h1>Unified ID 2.0のためのデータ変換サービス</h1>
             <p>メールアドレスの正規化、ハッシュ化、エンコードを行います。</p>
         </header>
 

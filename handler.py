@@ -89,7 +89,7 @@ def upload_file_to_s3(event: dict, context: dict) -> dict:
 
         try:
             # Store in S3.
-            header = b"# email\n"
+            header = b"email\n"
             data = header + form_data["file"][0]
             s3.put_object(Bucket=os.environ["source_bucket"],
                           Key=key,
@@ -187,10 +187,21 @@ def normalization_and_encoding(event: dict, context: dict) -> dict:
 
         # Process the file.
         source = s3.get_object(Bucket=source_bucket, Key=key)
+        data_type = "email"
         encoded_list = []
         for line in source["Body"]._raw_stream:
             data_str = line.decode("utf-8").rstrip()
-            if len(data_str) > 0 and is_email(data_str):
+            # Skip empty lines.
+            if len(data_str) == 0:
+                continue
+
+            # check if the first line is a header.
+            if data_str.lower() == "email":
+                data_type = "email"
+                continue
+
+            # Process email addresses.
+            if data_type == "email" and is_email(data_str):
                 encoded_list.append(
                     base64_encode(hash_sha256(
                         normalize_email_string(data_str))))
