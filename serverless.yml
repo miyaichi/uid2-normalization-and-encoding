@@ -6,7 +6,7 @@ provider:
   runtime: python3.9
   region: ${file(./config.yml):region}
   environment:
-    language: ${file(./config.yml):language}
+    region_code: ${file(./config.yml):region_code}
     source_bucket: ${file(./config.yml):source_bucket}
     destination_bucket:  ${file(./config.yml):destination_bucket}
     expires_in: ${file(./config.yml):expires_in}

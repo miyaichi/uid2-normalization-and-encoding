@@ -136,7 +136,7 @@
 
         <header data-role="header">
             <h1>Unified ID 2.0のためのデータ変換サービス</h1>
-            <p>メールアドレスの正規化、ハッシュ化、エンコードを行います。</p>
+            <p>メールアドレスや電話番号のの正規化、ハッシュ化、エンコードを行います。</p>
         </header>
 
         <div data-role="main" class="ui-content">
@@ -176,9 +176,16 @@
 
         <div data-role="main" class="ui-action">
             <h2>ファイルアップロード</h2>
-            <form id="file-form" action="https://{{ domain }}/{{ stage }}{{ path }}?language={{ language }}"
+            <form id="file-form" action="https://{{ domain }}/{{ stage }}{{ path }}?region_code={{ region_code }}"
                 method="post" enctype="multipart/form-data">
                 <p><input type="checkbox" id="agree" /><label for="agree">上記内容を確認の上、サービスを利用する</label></p>
+
+                <p>
+                    <input type="radio" id="email" name="data_type" value="email" checked>
+                    <label for="email">メールアドレス</label>
+                    <input type="radio" id="phone" name="data_type" value="phone">
+                    <label for="phone">電話番号</label>
+                </p>
 
                 <input type="file" name="file" id="file-input" disabled>
                 <button class="btn btn-primary" type="submit" disabled>

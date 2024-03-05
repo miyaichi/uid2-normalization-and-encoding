@@ -102,7 +102,7 @@
 
         <header data-role="header">
             <h1>Unified ID 2.0のためのデータ変換サービス</h1>
-            <p>メールアドレスの正規化、ハッシュ化、エンコードを行います。</p>
+            <p>メールアドレスや電話番号のの正規化、ハッシュ化、エンコードを行います。</p>
         </header>
 
         <div data-role="main" class="ui-action">

@@ -136,7 +136,7 @@
 
         <header data-role="header">
             <h1>Data Conversion Service for Unified ID 2.0</h1>
-            <p>Normalize, hash, and encode email addresses.</p>
+            <p>Normalize, hash, and encode email addresses and phone numbers.</p>
         </header>
 
         <div data-role="main" class="ui-content">
@@ -178,9 +178,16 @@
 
         <div data-role="main" class="ui-action">
             <h2>File Upload</h2>
-            <form id="file-form" action="https://{{ domain }}/{{ stage }}{{ path }}?language={{ language }}"
+            <form id="file-form" action="https://{{ domain }}/{{ stage }}{{ path }}?region_code={{ region_code }}"
                 method="post" enctype="multipart/form-data">
                 <p><input type="checkbox" id="agree" /><label for="agree">Please review the above information before using the service.</label></p>
+
+                <p>
+                    <input type="radio" id="email" name="data_type" value="email" checked>
+                    <label for="email">email address</label>
+                    <input type="radio" id="phone" name="data_type" value="phone">
+                    <label for="phone">phone number</label>
+                </p>
 
                 <input type="file" name="file" id="file-input" disabled>
                 <button class="btn btn-primary" type="submit" disabled>
