@@ -79,14 +79,14 @@ def upload_file_to_s3(event: dict, context: dict) -> dict:
 
         data_type = "email"
         try:
-            # Get data_type parameter.
-            data_type = form_data.get("data_type", [data_type])[0]
-
             # Parse multi-part data.
             _, c_data = cgi.parse_header(event["headers"]["content-type"])
             c_data["boundary"] = bytes(c_data["boundary"], "utf8")
             form_data = cgi.parse_multipart(
                 io.BytesIO(bytes(event["body"], "utf8")), c_data)
+
+            # Get data_type parameter.
+            data_type = form_data.get("data_type", [data_type])[0]
         except:
             return {
                 "statusCode": 400,
