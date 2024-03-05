@@ -203,7 +203,7 @@ def normalization_and_encoding(event: dict, context: dict) -> dict:
 
         # Process the file.
         source = s3.get_object(Bucket=source_bucket, Key=key)
-        region_code = os.environ["region_code"]
+        region_code = os.environ["region_code"].upper()
         data_type = "email"
         encoded_list = []
         for line in source["Body"]._raw_stream:
