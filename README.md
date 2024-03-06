@@ -101,12 +101,12 @@ The following table provides examples of input data, normalized data, and hashed
 | JANESaoirse@gmail.com  | janesaoirse@gmail.com | ku4mBX7Z3qJTXWyLFB1INzkyR2WZGW4ANSJUiW21iI8= |
 | user@example.com       | user@example.com      | tMmiiTI7IaAcPpQPFQ65uMVCWH8av9jw4cwf/F5HVRQ= |
 
-| phone number (resion code) | normalized phone number | hash and encoded                             |
+| phone number (region code) | normalized phone number | hash and encoded                             |
 | -------------------------- | ----------------------- | -------------------------------------------- |
-| 09012345678 (JP)           | +819012345678           | 1hFzBkhe0OUK+rOshx6Y+BaZFR8wKBUn1j/18jNlbGk= |
-| 090-1234-5678 (JP)         | +819012345678           | 1hFzBkhe0OUK+rOshx6Y+BaZFR8wKBUn1j/18jNlbGk= |
-| 03-1234-5678 (JP)          | +81312345678            | ku4mBX7Z3qJTXWyLFB1INzkyR2WZGW4ANSJUiW21iI8= |
-| 042-123-4567 (JP)          | +81421234567            | tMmiiTI7IaAcPpQPFQ65uMVCWH8av9jw4cwf/F5HVRQ= |
+| 09012345678 (JP)           | +819012345678           | PQajnUB5DxF2EpXgUwKTeK4oxLT28wFpMAXgefPUymQ= |
+| 090-1234-5678 (JP)         | +819012345678           | PQajnUB5DxF2EpXgUwKTeK4oxLT28wFpMAXgefPUymQ= |
+| 03-1234-5678 (JP)          | +81312345678            | fXNQ3wqQfPnPebQOMq8KXMcYhhJrhrq9HyzO3SXTNsY= |
+| 042-123-4567 (JP)          | +81421234567            | mYReC4DvTYqWofBcMqIU7NiwVFiS/8ZTCF/CGAlm06U= |
 
 # Lisence
 
