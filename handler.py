@@ -43,8 +43,11 @@ def upload_file_to_s3(event: dict, _context: dict) -> dict:
 
     # Get region code parameter.
     region_code = os.environ["region_code"]
-    region_code = event.get("queryStringParameters",
-                            {}).get("region_code", region_code)
+    try:
+        region_code = event.get("queryStringParameters",
+                                {}).get("region_code", region_code)
+    except:
+        pass
 
     if event["httpMethod"] == "GET":
         try:
