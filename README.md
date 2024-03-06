@@ -25,7 +25,7 @@ You can try the live demo.
 
 ## System Configuration
 
-![uid2-normalization-and-encoding](https://github.com/miyaichi/uid2-normalization-and-encoding/assets/129797/0a55eb88-fdcd-45b0-a257-e6147a5fea2e)
+![uid2-normalization-and-encoding](https://github.com/miyaichi/uid2-normalization-and-encoding/assets/129797/afe41acc-59f8-4bc4-9f60-fa4554ee707f)
 
 ## Deployment Guide
 
