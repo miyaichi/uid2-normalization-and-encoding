@@ -218,7 +218,7 @@ def normalization_and_encoding(event: dict, _context: dict) -> dict:
         region_code = os.environ["region_code"].upper()
         data_type = "email"
         encoded_list = []
-        for line in source["Body"]._raw_stream:
+        for line in source["Body"].iter_lines():
             data_str = line.decode("utf-8").rstrip()
             # Skip empty lines.
             if len(data_str) == 0:
