@@ -102,7 +102,7 @@
 
         <header data-role="header">
             <h1>Data Service for Unified ID 2.0</h1>
-            <p>Normalize, hash, and encode email addresses.</p>
+            <p>Normalize, hash, and encode email addresses and phone numbers.</p>
         </header>
 
         <div data-role="main" class="ui-action">

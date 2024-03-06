@@ -8,6 +8,7 @@ import jinja2
 import json
 import logging
 import os
+import phonenumbers
 import random
 import uuid
 from botocore.config import Config
@@ -16,12 +17,6 @@ from botocore.config import Config
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-
-s3 = boto3.client('s3',
-                  config=Config(region_name=os.environ["AWS_REGION"],
-                                signature_version="s3v4"))
-environment = jinja2.Environment(loader=jinja2.FileSystemLoader(
-    searchpath="./templates"))
 
 
 def upload_file_to_s3(event: dict, context: dict) -> dict:
@@ -37,18 +32,25 @@ def upload_file_to_s3(event: dict, context: dict) -> dict:
     """
     logger.info("File upload request.")
 
-    # Get language parameter.
-    language = os.environ["language"]
+    # Initialize S3 and Jinja2 environment.
+    s3 = boto3.client('s3',
+                      config=Config(region_name=os.environ["AWS_REGION"],
+                                    signature_version="s3v4"))
+    environment = jinja2.Environment(loader=jinja2.FileSystemLoader(
+        searchpath="./templates"))
+
+    # Get region code parameter.
+    region_code = os.environ["region_code"]
     try:
-        language = event.get("queryStringParameters",
-                             {}).get("language", language)
+        region_code = event.get("queryStringParameters",
+                                {}).get("region_code", region_code)
     except:
         pass
 
     if event["httpMethod"] == "GET":
         try:
             # Send the upload form.
-            template = environment.get_template(f"upload-{language}.tpl")
+            template = environment.get_template(f"upload-{region_code}.tpl")
             return {
                 "statusCode":
                 200,
@@ -58,7 +60,7 @@ def upload_file_to_s3(event: dict, context: dict) -> dict:
                 "body":
                 template.render({
                     "expires_in": os.environ["expires_in"],
-                    "language": language,
+                    "region_code": region_code,
                     "region": os.environ["AWS_REGION"],
                     "domain": event["requestContext"]["domainName"],
                     "stage": event["requestContext"]["stage"],
@@ -75,12 +77,16 @@ def upload_file_to_s3(event: dict, context: dict) -> dict:
         # Generate unique keys using uuid.
         key = str(uuid.uuid4()) + ".csv"
 
+        data_type = "email"
         try:
             # Parse multi-part data.
             _, c_data = cgi.parse_header(event["headers"]["content-type"])
             c_data["boundary"] = bytes(c_data["boundary"], "utf8")
             form_data = cgi.parse_multipart(
                 io.BytesIO(bytes(event["body"], "utf8")), c_data)
+
+            # Get data_type parameter.
+            data_type = form_data.get("data_type", [data_type])[0]
         except:
             return {
                 "statusCode": 400,
@@ -89,7 +95,7 @@ def upload_file_to_s3(event: dict, context: dict) -> dict:
 
         try:
             # Store in S3.
-            header = b"email\n"
+            header = data_type.encode() + b"\n"
             data = header + form_data["file"][0]
             s3.put_object(Bucket=os.environ["source_bucket"],
                           Key=key,
@@ -106,7 +112,7 @@ def upload_file_to_s3(event: dict, context: dict) -> dict:
                 HttpMethod="GET")
 
             # Returns a link to download a file.
-            template = environment.get_template(f"download-{language}.tpl")
+            template = environment.get_template(f"download-{region_code}.tpl")
             return {
                 "statusCode":
                 200,
@@ -139,6 +145,11 @@ def clean_up_buckets(event: dict, context: dict) -> dict:
         dict: The response indicating the success or failure of the cleanup operation.
     """
     logger.info("Clean up source and destination bucket.")
+
+    # Initialize S3.
+    s3 = boto3.client('s3',
+                      config=Config(region_name=os.environ["AWS_REGION"],
+                                    signature_version="s3v4"))
 
     # Expires_in minutes before current time.
     date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(
@@ -180,6 +191,11 @@ def normalization_and_encoding(event: dict, context: dict) -> dict:
     """
     logger.info("New files uploaded to the source bucket.")
 
+    # Initialize S3.
+    s3 = boto3.client('s3',
+                      config=Config(region_name=os.environ["AWS_REGION"],
+                                    signature_version="s3v4"))
+
     try:
         source_bucket = event["Records"][0]["s3"]["bucket"]["name"]
         key = event["Records"][0]["s3"]["object"]["key"]
@@ -187,6 +203,7 @@ def normalization_and_encoding(event: dict, context: dict) -> dict:
 
         # Process the file.
         source = s3.get_object(Bucket=source_bucket, Key=key)
+        region_code = os.environ["region_code"].upper()
         data_type = "email"
         encoded_list = []
         for line in source["Body"]._raw_stream:
@@ -196,8 +213,8 @@ def normalization_and_encoding(event: dict, context: dict) -> dict:
                 continue
 
             # check if the first line is a header.
-            if data_str.lower() == "email":
-                data_type = "email"
+            if data_str.lower() == "email" or data_str.lower() == "phone":
+                data_type = data_str.lower()
                 continue
 
             # Process email addresses.
@@ -205,7 +222,13 @@ def normalization_and_encoding(event: dict, context: dict) -> dict:
                 encoded_list.append(
                     base64_encode(hash_sha256(
                         normalize_email_string(data_str))))
-        logger.info(f"{len(encoded_list)} email addresses were processed.")
+            # Process phone numbers.
+            elif data_type == "phone" and is_phone_number(
+                    data_str, region_code):
+                encoded_list.append(
+                    base64_encode(
+                        hash_sha256(
+                            normalize_phone_number(data_str, region_code))))
     except:
         logger.error("An error occurred while processing the file.")
         return {"statusCode": 500}
@@ -270,6 +293,44 @@ def normalize_email_string(email: str) -> str:
         local = local.split("+")[0]
         email = local + "@" + domain
     return email
+
+
+def is_phone_number(phone: str, region_code: str) -> bool:
+    """
+    Determines if the string is a phone number.
+
+    Args:
+        phone (str): The string to check.
+        region_code (str): The region code of the phone number.
+
+    Returns:
+        bool: True if the string is a phone number, False otherwise.
+    """
+    try:
+        phonenumbers.parse(phone, region_code)
+        return True
+    except:
+        return False
+
+
+def normalize_phone_number(phone: str, region_code: str) -> str:
+    """
+    Normalizes a phone number string.
+
+    Args:
+        phone (str): The phone number string to normalize.
+        region_code (str): The region code of the phone number.
+
+    Returns:
+        str: The normalized phone number string.
+    """
+    try:
+        phone = phonenumbers.format_number(
+            phonenumbers.parse(phone, region_code),
+            phonenumbers.PhoneNumberFormat.E164)
+    except:
+        phone = ""
+    return phone
 
 
 def base64_encode(b: bytes) -> str:

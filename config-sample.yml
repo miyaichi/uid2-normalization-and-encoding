@@ -1,5 +1,5 @@
 region: <AWS Region>
-language: <Template language>
+region_code: <region code>
 source_bucket: <Source Bucket>
 destination_bucket: <Destination Bucket>
 expires_in: 60

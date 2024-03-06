@@ -136,22 +136,21 @@
 
         <header data-role="header">
             <h1>Unified ID 2.0のためのデータ変換サービス</h1>
-            <p>メールアドレスの正規化、ハッシュ化、エンコードを行います。</p>
+            <p>メールアドレスや電話番号の正規化、ハッシュ化、エンコードを行います。</p>
         </header>
 
         <div data-role="main" class="ui-content">
             <h2>サービス概要</h2>
 
-            <p>このサービスは、<a href="https://unifiedid.com/ja/">Unified ID 2.0</a> で利用する際に必要なメールアドレスの正規化、ハッシュ化、エンコードを行います。</p>
+            <p>このサービスは、<a href="https://unifiedid.com/ja/">Unified ID 2.0</a> で利用する際に必要なメールアドレスや電話番号の正規化、ハッシュ化、エンコードを行います。</p>
 
             <p>サービスの詳細、システム概要、ソースコードは GitHub: <a
-                    href="https://github.com/miyaichi/uid2-normalization-and-encoding">Email
-                    address processing service for Unified ID 2.0</a> を確認してください。</p>
+                    href="https://github.com/miyaichi/uid2-normalization-and-encoding">Data processing service for Unified ID 2.0</a> を確認してください。</p>
 
             <h2>使い方</h2>
 
             <ol>
-                <li>メールアドレスを1行に1つずつ記載したテキストファイルを用意します。</li>
+                <li>メールアドレスか電話番号を1行に1つずつ記載したテキストファイルを用意します。</li>
                 <li>ファイルをアップロードします。</li>
                 <li>変換後のファイルをダウンロードします。ダウンロードは{{ expires_in }}分以内に行ってください。</li>
             </ol>
@@ -159,7 +158,7 @@
             <h2>変換後のファイル</h2>
 
             <ul>
-                <li>ダウンロードファイルには、1行に1ずつ記載された、メールアドレスを正規化、ハッシュ化、エンコードしたデータが含まれます。</li>
+                <li>ダウンロードファイルには、1行に1ずつ記載された、正規化、ハッシュ化、エンコードしたデータが含まれます。</li>
                 <li>行は無作為に並べ替えられていますので、アップロードしたファイルと照合することはできません。</li>
                 <li>ダウンロードファイルの名前は、UUIDを使ったユニークなファイル名（例:54f1c989-b7d7-4d97-a054-46562c8c66a8.csv）になります。</li>
             </ul>
@@ -169,16 +168,23 @@
             <ul>
                 <li>このサービスは、AWSの {{ aws_region_mapping[region] }} リージョンで運用されています。</li>
                 <li>アップロードされたファイル、変換されたファイルは、{{ expires_in }}分後に自動削除されます。</li>
-                <li>メールアドレスは、ログファイルを含めて、システムには一切記録されません。</li>
+                <li>このサービスは、ログファイルを含め、ファイルにデータを記録しません。</li>
                 <li>オリジナルのファイル名は保持せず、変換後のデータの順序を無作為にすることで、匿名性を高めています。</li>
             </ul>
         </div>
 
         <div data-role="main" class="ui-action">
             <h2>ファイルアップロード</h2>
-            <form id="file-form" action="https://{{ domain }}/{{ stage }}{{ path }}?language={{ language }}"
+            <form id="file-form" action="https://{{ domain }}/{{ stage }}{{ path }}?region_code={{ region_code }}"
                 method="post" enctype="multipart/form-data">
                 <p><input type="checkbox" id="agree" /><label for="agree">上記内容を確認の上、サービスを利用する</label></p>
+
+                <p>
+                    <input type="radio" id="email" name="data_type" value="email" checked>
+                    <label for="email">メールアドレス</label>
+                    <input type="radio" id="phone" name="data_type" value="phone">
+                    <label for="phone">電話番号</label>
+                </p>
 
                 <input type="file" name="file" id="file-input" disabled>
                 <button class="btn btn-primary" type="submit" disabled>
@@ -186,6 +192,11 @@
                 </button>
             </form>
             <script type="text/javascript">
+                window.addEventListener('pageshow', function(event) {
+                    document.getElementById('agree').checked = false;
+                    document.getElementById('file-input').disabled = true;
+                    document.querySelector('button[type="submit"]').disabled = true;
+                });
                 document.getElementById('agree').addEventListener('change', function () {
                     if (this.checked) {
                         document.getElementById('file-input').disabled = false;

@@ -136,23 +136,22 @@
 
         <header data-role="header">
             <h1>Data Conversion Service for Unified ID 2.0</h1>
-            <p>Normalize, hash, and encode email addresses.</p>
+            <p>Normalize, hash, and encode email addresses and phone numbers.</p>
         </header>
 
         <div data-role="main" class="ui-content">
             <h2>Overview</h2>
 
-            <p>This service normalizes, hashes, and encodes email addresses for use with <a
+            <p>This service normalizes, hashes, and encodes email addresses and phone numbers　for use with <a
                     href="https://unifiedid.com">Unified ID 2.0</a>.</p>
 
             <p>For more information about the service, system overview, and source code, check GitHub: <a
-                    href="https://github.com/miyaichi/uid2-normalization-and-encoding">Email
-                    address processing service for Unified ID 2.0</a>.
+                    href="https://github.com/miyaichi/uid2-normalization-and-encoding">Data processing service for Unified ID 2.0</a>.
 
             <h2>How to Use</h2>
 
             <ol>
-                <li>Prepare a text file with one email address per line.</li>
+                <li>Prepare a text file with one email address or phone numbers per line.</li>
                 <li>Upload the file to the service.</li>
                 <li>Download the converted file. The download link will expire after {{ expires_in }} minutes.</li>
             </ol>
@@ -160,7 +159,7 @@
             <h2>The Converted File</h2>
 
             <ul>
-                <li>The download file contains normalized, hashed, and encoded data for email addresses, one per line.</li>
+                <li>The download file contains normalized, hashed, and encoded data, one per line.</li>
                 <li>The rows are sorted randomly and cannot be matched against the uploaded file.</li>
                 <li>The name of the download file will be a unique file name with UUID (e.g. 54f1c989-b7d7-4d97-a054-46562c8c66a8.csv)</li>
             </ul>
@@ -170,7 +169,7 @@
             <ul>
                 <li>The service is hosted on AWS in the {{ aws_region_mapping[region] }} region.</li>
                 <li>The uploaded and converted files are automatically deleted after {{ expires_in }} minutes.</li>
-                <li>Email addresses are never stored in the system, including in log files.</li>
+                <li>The service records no data in the file, including log files.</li>
                 <li>We enhance anonymity by not retaining the original file name and randomizing the order of the
                     converted data.</li>
             </ul>
@@ -178,9 +177,16 @@
 
         <div data-role="main" class="ui-action">
             <h2>File Upload</h2>
-            <form id="file-form" action="https://{{ domain }}/{{ stage }}{{ path }}?language={{ language }}"
+            <form id="file-form" action="https://{{ domain }}/{{ stage }}{{ path }}?region_code={{ region_code }}"
                 method="post" enctype="multipart/form-data">
                 <p><input type="checkbox" id="agree" /><label for="agree">Please review the above information before using the service.</label></p>
+
+                <p>
+                    <input type="radio" id="email" name="data_type" value="email" checked>
+                    <label for="email">email address</label>
+                    <input type="radio" id="phone" name="data_type" value="phone">
+                    <label for="phone">phone number</label>
+                </p>
 
                 <input type="file" name="file" id="file-input" disabled>
                 <button class="btn btn-primary" type="submit" disabled>
@@ -189,6 +195,11 @@
                 </div>
             </form>
             <script type="text/javascript">
+                window.addEventListener('pageshow', function(event) {
+                    document.getElementById('agree').checked = false;
+                    document.getElementById('file-input').disabled = true;
+                    document.querySelector('button[type="submit"]').disabled = true;
+                });
                 document.getElementById('agree').addEventListener('change', function () {
                     if (this.checked) {
                         document.getElementById('file-input').disabled = false;
