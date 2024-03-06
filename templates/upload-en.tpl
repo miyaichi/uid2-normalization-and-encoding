@@ -195,6 +195,11 @@
                 </div>
             </form>
             <script type="text/javascript">
+                window.addEventListener('pageshow', function(event) {
+                    document.getElementById('agree').checked = false;
+                    document.getElementById('file-input').disabled = true;
+                    document.querySelector('button[type="submit"]').disabled = true;
+                });
                 document.getElementById('agree').addEventListener('change', function () {
                     if (this.checked) {
                         document.getElementById('file-input').disabled = false;
