@@ -46,7 +46,7 @@ def upload_file_to_s3(event: dict, _context: dict) -> dict:
     try:
         region_code = event.get("queryStringParameters",
                                 {}).get("region_code", region_code)
-    except:
+    except KeyError:
         pass
 
     if event["httpMethod"] == "GET":
@@ -69,6 +69,7 @@ def upload_file_to_s3(event: dict, _context: dict) -> dict:
                     "path": event["requestContext"]["resourcePath"]
                 })
             }
+        # pylint: disable=W0718
         except Exception as error:
             return {
                 "statusCode":
@@ -91,6 +92,7 @@ def upload_file_to_s3(event: dict, _context: dict) -> dict:
 
             # Get data_type parameter.
             data_type = form_data.get("data_type", [data_type])[0]
+        # pylint: disable=W0718
         except Exception as error:
             return {
                 "statusCode":
@@ -132,6 +134,7 @@ def upload_file_to_s3(event: dict, _context: dict) -> dict:
                     "expires_in": os.environ["expires_in"]
                 })
             }
+        # pylint: disable=W0718
         except Exception as error:
             return {
                 "statusCode":
@@ -181,6 +184,7 @@ def clean_up_buckets(_event: dict, _context: dict) -> dict:
                         logger.info(
                             "Deleted Key %s in Bucket %s (last_modified: %s).",
                             key, bucket, last_modified)
+                    # pylint: disable=W0718
                     except Exception as error:
                         logger.error(
                             f"An error occurred while deleting Key %s in Bucket %s: {str(error)}",
@@ -241,6 +245,7 @@ def normalization_and_encoding(event: dict, _context: dict) -> dict:
                     base64_encode(
                         hash_sha256(
                             normalize_phone_number(data_str, region_code))))
+    # pylint: disable=W0718
     except Exception as error:
         return {
             "statusCode": 500,
@@ -260,6 +265,7 @@ def normalization_and_encoding(event: dict, _context: dict) -> dict:
         s3_client.put_object(Bucket=destination_bucket,
                              Key=key,
                              Body=buffer.read())
+    # pylint: disable=W0718
     except Exception as error:
         return {
             "statusCode":
