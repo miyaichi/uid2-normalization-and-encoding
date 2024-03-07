@@ -1,85 +1,14 @@
 """This module contains test cases for the handler module."""
 import unittest
-import hashlib
-import base64
 
-
-def is_email(email: str) -> bool:
-    """Check if the given string is a valid email address.
-
-    Args:
-        email (str): The string to be checked.
-
-    Returns:
-        bool: True if the string is a valid email address, False otherwise.
-    """
-    # Check if the string contains '@' and '.'
-    if '@' in email and '.' in email:
-        return True
-    return False
-
-
-def normalize_email_string(email: str) -> str:
-    """Normalize the given email string.
-
-    Args:
-        email (str): The email string to be normalized.
-
-    Returns:
-        str: The normalized email string.
-    """
-    # Remove leading and trailing spaces
-    email = email.strip()
-
-    # Convert to lowercase
-    email = email.lower()
-
-    # In gmail.com addresses only, remove all dots
-    if email.endswith('@gmail.com'):
-        email = email.replace('.', '')
-
-    # In gmail.com addresses only, remove everything after the first plus sign
-    if email.endswith('@gmail.com') and '+' in email:
-        email = email.split('+')[0]
-
-    return email
-
-
-def hash_sha256(string: str) -> bytes:
-    """Hash the given string using SHA256.
-
-    Args:
-        string (str): The string to be hashed.
-
-    Returns:
-        bytes: The hashed string.
-    """
-    # Create a SHA256 hash object
-    sha256_hash = hashlib.sha256()
-
-    # Hash the string
-    sha256_hash.update(string.encode('utf-8'))
-
-    # Get the hashed string
-    hashed_string = sha256_hash.digest()
-
-    return hashed_string
-
-
-def base64_encode(data: bytes) -> str:
-    """Encode the given data using Base64.
-
-    Args:
-        data (bytes): The data to be encoded.
-
-    Returns:
-        str: The encoded data.
-    """
-    # Encode the data using Base64
-    encoded_data = base64.b64encode(data).decode('utf-8')
-
-    return encoded_data
-
+from handler import (
+    is_email,
+    normalize_email_string,
+    is_phone_number,
+    normalize_phone_number,
+    hash_sha256,
+    base64_encode,
+)
 
 class TestIsEmail(unittest.TestCase):
     """Test case for the is_email function."""
@@ -115,6 +44,37 @@ class TestNormalizeEmailString(unittest.TestCase):
         self.assertEqual(normalize_email_string('janedoe+home@gmail.com'),
                          'janedoe@gmail.com')
 
+class TestIsPhoneNumber(unittest.TestCase):
+    """Test case for the is_phone_number function."""
+    def test_is_phone_number(self):
+        """Test if the given string is a valid phone number."""
+        # Case 1: Determine if the string is a phone number.
+        self.assertTrue(is_phone_number('09012345678', 'JP'))
+
+        # Case 2: Determine if the string is not a phone number.
+        self.assertTrue(is_phone_number('090-1234-5678', 'JP'))
+
+        # Case 3: Determine if the string is not a phone number.
+        self.assertTrue(is_phone_number('03-1234-5678', 'JP'))
+
+        # Case 4: Determine if the string is not a phone number.
+        self.assertTrue(is_phone_number('042-123-4567', 'JP'))
+
+class TestNormalizePhoneNumber(unittest.TestCase):
+    """Test case for the normalization of phone number strings."""
+    def test_normalize_phone_number(self):
+        """Test the normalization of phone number strings."""
+        # Case 1: Remove leading and trailing spaces.
+        self.assertEqual(normalize_phone_number(' 09012345678 ', 'JP'),'+819012345678')
+
+        # Case 2: Remove hyphens.
+        self.assertEqual(normalize_phone_number('090-1234-5678', 'JP'),'+819012345678')
+
+        # Case 3: Remove hyphens.
+        self.assertEqual(normalize_phone_number('03-1234-5678', 'JP'),'+81312345678')
+
+        # Case 4: Remove hyphens.
+        self.assertEqual(normalize_phone_number('042-123-4567', 'JP'),'+81421234567')
 
 class TestHashSha256(unittest.TestCase):
     """Test case for the SHA256 hashing of strings."""
