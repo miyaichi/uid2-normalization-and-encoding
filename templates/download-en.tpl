@@ -106,7 +106,7 @@
         </header>
 
         <div data-role="main" class="ui-action">
-            <p>Download the converted file {{key}} from <a href="{{ location }}">this link</a>.</p>
+            <p>Download the converted file {{key}} from <a href="{{ location["GET"] }}">this link</a>.</p>
             <p>The file will be automatically deleted after {{ expires_in }} minutes.</p>
         </div>
 

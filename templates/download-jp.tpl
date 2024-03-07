@@ -106,7 +106,7 @@
         </header>
 
         <div data-role="main" class="ui-action">
-            <p>変換したファイル {{key}} を<a href="{{ location }}">このリンク</a>からダウンロードしてください。</p>
+            <p>変換したファイル {{key}} を<a href="{{ location["GET"] }}">このリンク</a>からダウンロードしてください。</p>
             <p>ファイルは、{{ expires_in }}分後に自動削除されます。</p>
         </div>
 

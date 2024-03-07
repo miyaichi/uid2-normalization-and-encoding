@@ -46,7 +46,8 @@ def upload_file_to_s3(event: dict, _context: dict) -> dict:
     try:
         region_code = event.get("queryStringParameters",
                                 {}).get("region_code", region_code)
-    except KeyError:
+    # pylint: disable=W0703
+    except Exception:
         pass
 
     if event["httpMethod"] == "GET":
@@ -110,14 +111,16 @@ def upload_file_to_s3(event: dict, _context: dict) -> dict:
                                  Body=data)
 
             # Generate a pre-signed URL.
-            location = s3_client.generate_presigned_url(
-                ClientMethod="get_object",
-                Params={
-                    "Bucket": os.environ["destination_bucket"],
-                    "Key": key
-                },
-                ExpiresIn=int(os.environ["expires_in"]) * 60,
-                HttpMethod="GET")
+            location = {}
+            for http_method in ["GET", "HEAD"]:
+                location[http_method] = s3_client.generate_presigned_url(
+                    ClientMethod="get_object",
+                    Params={
+                        "Bucket": os.environ["source_bucket"],
+                        "Key": key
+                    },
+                    ExpiresIn=int(os.environ["expires_in"]) * 60,
+                    HttpMethod=http_method)
 
             # Returns a link to download a file.
             template = environment.get_template(f"download-{region_code}.tpl")
