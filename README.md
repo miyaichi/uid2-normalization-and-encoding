@@ -94,19 +94,19 @@ Follows the Unified ID 2.0 [Normalization and Encoding](https://unifiedid.com/do
 
 The following table provides examples of input data, normalized data, and hashed and encoded output.
 
-| email                  | normalized email      | hash and encoded                             |
-| ---------------------- | --------------------- | -------------------------------------------- |
-| jane.doe@gmail.com     | janedoe@gmail.com     | 1hFzBkhe0OUK+rOshx6Y+BaZFR8wKBUn1j/18jNlbGk= |
-| janedoe+home@gmail.com | janedoe@gmail.com     | 1hFzBkhe0OUK+rOshx6Y+BaZFR8wKBUn1j/18jNlbGk= |
-| JANESaoirse@gmail.com  | janesaoirse@gmail.com | ku4mBX7Z3qJTXWyLFB1INzkyR2WZGW4ANSJUiW21iI8= |
-| user@example.com       | user@example.com      | tMmiiTI7IaAcPpQPFQ65uMVCWH8av9jw4cwf/F5HVRQ= |
+| email                    | normalized email        | hash and encoded                             |
+| ------------------------ | ----------------------- | -------------------------------------------- |
+| `jane.doe@gmail.com`     | `janedoe@gmail.com`     | 1hFzBkhe0OUK+rOshx6Y+BaZFR8wKBUn1j/18jNlbGk= |
+| `janedoe+home@gmail.com` | `janedoe@gmail.com`     | 1hFzBkhe0OUK+rOshx6Y+BaZFR8wKBUn1j/18jNlbGk= |
+| `JANESaoirse@gmail.com`  | `janesaoirse@gmail.com` | ku4mBX7Z3qJTXWyLFB1INzkyR2WZGW4ANSJUiW21iI8= |
+| `user@example.com`       | `user@example.com`      | tMmiiTI7IaAcPpQPFQ65uMVCWH8av9jw4cwf/F5HVRQ= |
 
 | phone number (region code) | normalized phone number | hash and encoded                             |
 | -------------------------- | ----------------------- | -------------------------------------------- |
-| 09012345678 (JP)           | +819012345678           | PQajnUB5DxF2EpXgUwKTeK4oxLT28wFpMAXgefPUymQ= |
-| 090-1234-5678 (JP)         | +819012345678           | PQajnUB5DxF2EpXgUwKTeK4oxLT28wFpMAXgefPUymQ= |
-| 03-1234-5678 (JP)          | +81312345678            | fXNQ3wqQfPnPebQOMq8KXMcYhhJrhrq9HyzO3SXTNsY= |
-| 042-123-4567 (JP)          | +81421234567            | mYReC4DvTYqWofBcMqIU7NiwVFiS/8ZTCF/CGAlm06U= |
+| `09012345678` (JP)         | `+819012345678`         | PQajnUB5DxF2EpXgUwKTeK4oxLT28wFpMAXgefPUymQ= |
+| `090-1234-5678` (JP)       | `+819012345678`         | PQajnUB5DxF2EpXgUwKTeK4oxLT28wFpMAXgefPUymQ= |
+| `03-1234-5678` (JP)        | `+81312345678`          | fXNQ3wqQfPnPebQOMq8KXMcYhhJrhrq9HyzO3SXTNsY= |
+| `042-123-4567` (JP)        | `+81421234567`          | mYReC4DvTYqWofBcMqIU7NiwVFiS/8ZTCF/CGAlm06U= |
 
 # Lisence
 
