@@ -93,6 +93,10 @@
         a:hover {
             text-decoration: underline;
         }
+
+        a.disabled{
+           pointer-events: none;
+        }
     </style>
 </head>
 
@@ -106,8 +110,32 @@
         </header>
 
         <div data-role="main" class="ui-action">
-            <p>変換したファイル {{key}} を<a href="{{ location["GET"] }}">このリンク</a>からダウンロードしてください。</p>
+            <p>変換したファイル {{key}} を<a href="{{ location["GET"] }}" id="download" onclick="startDownload">このリンク</a>からダウンロードしてください。</p>
             <p>ファイルは、{{ expires_in }}分後に自動削除されます。</p>
+            <script>
+                var intervalId;
+
+                function startDownload() {
+                    var link = document.getElementById("download");
+                    link.classList.add("disabled");
+                    intervalId = setInterval(checkStatus, 1000);
+                }
+
+                function checkStatus() {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("HEAD", "{{ location["HEAD"] }}", true);
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === 4) {
+                            if (xhr.status === 200) {
+                                link.classList.remove("disabled");
+                                window.location.href = "{{ location["GET"] }}";
+                                clearInterval(intervalId);
+                            }
+                        }
+                    };
+                    xhr.send();
+                }
+            </script>
         </div>
 
         <footer data-role="footer">
